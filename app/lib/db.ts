@@ -8,10 +8,10 @@ const connectionString = process.env.DATABASE_URL ||
 
 const SCHEMA_NAME = 'public'  // Supabase uses public schema
 
-// Create pool for connection reuse - Filess.io free tier has low limit
+// Create pool for connection reuse
 const pool = new Pool({
     connectionString,
-    ssl: { rejectUnauthorized: false },  // Supabase requires SSL
+    ssl: false,  // Transaction pooler doesn't use SSL
     max: 5,
     idleTimeoutMillis: 10000,
     connectionTimeoutMillis: 5000,
