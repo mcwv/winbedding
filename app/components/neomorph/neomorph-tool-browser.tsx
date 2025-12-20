@@ -53,7 +53,7 @@ export default function NeomorphToolBrowser({ tools }: NeomorphToolBrowserProps)
   const [selectedTool, setSelectedTool] = useState<Tool | null>(tools[0] || null)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [currentPage, setCurrentPage] = useState(1)
+  const [visibleCount, setVisibleCount] = useState(30)  // Start with 30 tools
 
   const categories = useMemo(() => ["all", ...MAIN_CATEGORIES], [])
 
@@ -70,16 +70,25 @@ export default function NeomorphToolBrowser({ tools }: NeomorphToolBrowserProps)
       return matchesSearch && matchesCategory
     })
 
-    // Reset to page 1 when filters change
-    setCurrentPage(1)
+    // Reset visible count when filters change
+    setVisibleCount(30)
 
     return filtered
   }, [tools, searchQuery, selectedCategory])
 
-  // Pagination
-  const totalPages = Math.ceil(filteredTools.length / TOOLS_PER_PAGE)
-  const startIndex = (currentPage - 1) * TOOLS_PER_PAGE
-  const paginatedTools = filteredTools.slice(startIndex, startIndex + TOOLS_PER_PAGE)
+  // Visible tools (infinite scroll)
+  const visibleTools = filteredTools.slice(0, visibleCount)
+
+  // Handle scroll to load more
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget
+    if (scrollHeight - scrollTop <= clientHeight + 100) {
+      // Near bottom, load more
+      if (visibleCount < filteredTools.length) {
+        setVisibleCount(prev => Math.min(prev + 20, filteredTools.length))
+      }
+    }
+  }
 
   // Check if descriptive text is redundant
   const isDescriptionRedundant = selectedTool && selectedTool.description && selectedTool.shortDescription &&
@@ -115,45 +124,23 @@ export default function NeomorphToolBrowser({ tools }: NeomorphToolBrowserProps)
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <span>Showing {startIndex + 1}-{Math.min(startIndex + TOOLS_PER_PAGE, filteredTools.length)} of {filteredTools.length} tools</span>
-        {totalPages > 1 && (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="p-2 rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105"
-              style={{
-                background: '#F0F0F3',
-                boxShadow: currentPage === 1 ? neomorphShadow.pressed : neomorphShadow.raised,
-              }}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="text-xs">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="p-2 rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105"
-              style={{
-                background: '#F0F0F3',
-                boxShadow: currentPage === totalPages ? neomorphShadow.pressed : neomorphShadow.raised,
-              }}
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
+      <div className="flex items-center justify-between text-xs text-muted-foreground flex-shrink-0">
+        <span>{filteredTools.length} tools found</span>
+        {visibleCount < filteredTools.length && (
+          <span className="text-green-600">Scroll for more...</span>
         )}
       </div>
 
-      <div className="grid lg:grid-cols-5 gap-6 flex-1" style={{ minHeight: 0 }}>
-        {/* Left: Tool List */}
-        <div className="lg:col-span-2 flex flex-col" style={{ minHeight: 0 }}>
-          <div className="rounded-2xl p-4 flex-1 overflow-y-auto" style={{ background: '#F0F0F3', boxShadow: neomorphShadow.pressed, maxHeight: 'calc(100vh - 300px)' }}>
+      <div className="grid lg:grid-cols-5 gap-6 flex-1 overflow-hidden">
+        {/* Left: Tool List - scrolls independently */}
+        <div className="lg:col-span-2 flex flex-col overflow-hidden">
+          <div
+            className="rounded-2xl p-4 flex-1 overflow-y-auto"
+            style={{ background: '#F0F0F3', boxShadow: neomorphShadow.pressed }}
+            onScroll={handleScroll}
+          >
             <div className="space-y-3">
-              {paginatedTools.map((tool) => (
+              {visibleTools.map((tool: Tool) => (
                 <button
                   key={tool.id}
                   onClick={() => setSelectedTool(tool)}

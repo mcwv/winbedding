@@ -30,24 +30,24 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#F0F0F3' }}>
+    <div className="h-screen flex flex-col overflow-hidden" style={{ background: '#F0F0F3' }}>
       <NeomorphNav />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col overflow-hidden">
         {/* Compact Hero */}
-        <div className="container mx-auto px-4 pt-8 pb-6">
+        <div className="container mx-auto px-4 pt-6 pb-4 flex-shrink-0">
           <div className="max-w-3xl">
-            <h1 className="text-3xl md:text-4xl font-bold mb-3">
+            <h1 className="text-2xl md:text-3xl font-bold mb-2">
               Soft landings for <span style={{ color: '#22c55e' }}>smart builders</span>
             </h1>
-            <p className="text-base text-muted-foreground mb-4">
+            <p className="text-sm text-muted-foreground">
               {toolCount} curated AI tools.
             </p>
           </div>
         </div>
 
-        {/* Splitscreen Browser */}
-        <div className="flex-1 container mx-auto px-4 pb-8">
+        {/* Splitscreen Browser - fills remaining space */}
+        <div className="flex-1 container mx-auto px-4 pb-4 overflow-hidden">
           <NeomorphToolBrowser tools={tools} />
         </div>
       </div>
