@@ -8,13 +8,13 @@ const connectionString = process.env.DATABASE_URL ||
 
 const SCHEMA_NAME = 'ai_tools_silenttorn'
 
-// Create pool for connection reuse
+// Create pool for connection reuse - Filess.io free tier has low limit
 const pool = new Pool({
     connectionString,
     ssl: false,
-    max: 10,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 10000,
+    max: 1,  // Free tier only allows ~3 connections
+    idleTimeoutMillis: 10000,
+    connectionTimeoutMillis: 5000,
 })
 
 // Set search path on each connection
