@@ -149,7 +149,7 @@ export function dbToolToTool(dbTool: DbTool) {
 
         hasAffiliateLink: dbTool.has_affiliate_link || false,
 
-        source: 'database',
+        source: 'database' as const,
         createdAt: dbTool.created_at?.toISOString() || new Date().toISOString(),
         updatedAt: dbTool.updated_at?.toISOString() || new Date().toISOString(),
 
