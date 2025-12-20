@@ -2,17 +2,17 @@ import pg from 'pg'
 
 const { Pool } = pg
 
-// Connection string for Filess.io PostgreSQL
+// Connection string for Supabase PostgreSQL (pooler for serverless)
 const connectionString = process.env.DATABASE_URL ||
-    'postgresql://ai_tools_silenttorn:767023df83bd7e678417793dfbbc2c1e4c5cb26c@h7h-gj.h.filess.io:61038/ai_tools_silenttorn'
+    'postgresql://postgres.idfykpdhfmuqkdnfjgqw:E1SqIqRqwhwg20@aws-1-eu-west-1.pooler.supabase.com:6543/postgres'
 
-const SCHEMA_NAME = 'ai_tools_silenttorn'
+const SCHEMA_NAME = 'public'  // Supabase uses public schema
 
 // Create pool for connection reuse - Filess.io free tier has low limit
 const pool = new Pool({
     connectionString,
-    ssl: false,
-    max: 1,  // Free tier only allows ~3 connections
+    ssl: { rejectUnauthorized: false },  // Supabase requires SSL
+    max: 5,
     idleTimeoutMillis: 10000,
     connectionTimeoutMillis: 5000,
 })
