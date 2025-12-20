@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(node:*)",
+      "WebFetch(domain:www.bedwinning.com)",
+      "Bash(powershell -Command \"\\(Get-Content ''bedwinning - AI-Tools.csv'' | Measure-Object -Line\\).Lines - 1\")",
+      "Bash(ls:*)",
+      "Bash(npm install:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(PGPASSWORD='767023df83bd7e678417793dfbbc2c1e4c5cb26c' psql:*)",
+      "Bash(PGPASSWORD='767023df83bd7e678417793dfbbc2c1e4c5cb26c' psql -U ai_tools_silenttorn -h h7h-gj.h.filess.io -p 61038 -d ai_tools_silenttorn -c \"SELECT name, logo_url, screenshot_url FROM tools WHERE name IN \\(''10Web'', ''123RF AI Image Generator'', ''15 Minute Plan''\\) LIMIT 3;\")",
+      "Bash(npm run dev:*)",
+      "Bash(dir:*)"
+    ]
+  }
+}

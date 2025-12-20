@@ -1,0 +1,327 @@
+[
+  {
+    "core_identity": {
+      "name": "10Web",
+      "website_url": "https://10web.io",
+      "tagline": "AI-Powered WordPress Platform for automated website building and hosting.",
+      "short_description": "An all-in-one platform that uses AI to build, host, and optimize WordPress websites in minutes.",
+      "full_description": "10Web is a comprehensive **AI-powered WordPress platform** that revolutionizes how websites are built and managed. Its core feature is an **AI Website Builder** that can recreate any existing website or generate a brand-new one based on simple user descriptions, providing an **Elementor-based** interface for easy customization. Beyond building, 10Web includes automated **PageSpeed optimization** that guarantees a 90+ score and managed **Google Cloud hosting**. It is designed for agencies and freelancers who need to scale their web development process without sacrificing performance or design flexibility.",
+      "logo_url": "https://10web.io/wp-content/themes/10web/images/10web-logo.svg",
+      "operating_systems": ["Web"],
+      "platforms": ["Browser"]
+    },
+    "categorization": {
+      "primary_category": "Automation & Workflows",
+      "subcategory": "AI Website Builder",
+      "tags": ["wordpress", "hosting", "no-code", "page-speed"],
+      "target_audience": ["Agencies", "Freelancers", "Small Business Owners"],
+      "industry_verticals": ["Web Development", "Marketing", "SaaS"]
+    },
+    "pricing_and_plans": {
+      "model": "Paid",
+      "starting_price": 10.00,
+      "currency": "USD",
+      "has_free_tier": false,
+      "has_free_trial": true,
+      "trial_details": "7-day free trial available.",
+      "pricing_summary": "Plans start at $10/mo for a single site. Agency plans with white-labeling available."
+    },
+    "expertise_signals": {
+      "skill_level": "Beginner",
+      "learning_curve": "Low",
+      "integrations": ["Elementor", "Google Cloud", "Stripe", "WooCommerce"],
+      "api_available": false,
+      "documentation_quality": "Excellent",
+      "support_options": ["24/7 Live Chat", "Email", "Help Center"],
+      "alternatives": ["Durable", "Wix ADI", "Framer AI"]
+    },
+    "trust_and_authority": {
+      "company_name": "10Web Inc.",
+      "year_founded": 2017,
+      "headquarters_city": "Newark",
+      "country": "USA",
+      "employee_count": "51-200",
+      "funding_raised": "$14.4M",
+      "notable_customers": ["Digital Agencies", "E-commerce Brands"],
+      "has_privacy_policy": true,
+      "gdpr_compliant": true,
+      "security_features": ["SSL Encryption", "Automatic Backups", "WAF Protection"]
+    },
+    "review_and_rating": {
+      "rating_score": 4.5,
+      "pros": [
+        "Incredible speed optimization out of the box",
+        "AI can clone existing websites remarkably well",
+        "Seamless managed hosting on Google Cloud infrastructure"
+      ],
+      "cons": [
+        "Heavily reliant on the Elementor ecosystem",
+        "AI content still requires manual refining for brand voice",
+        "No permanent free tier"
+      ],
+      "best_for": "Agencies needing to rapidly prototype and host high-performance WordPress sites.",
+      "not_recommended_for": "Users who prefer cloud-hosted builders like Wix or Squarespace over WordPress.",
+      "verdict": "The premier choice for scaling WordPress development with AI speed."
+    }
+  },
+  {
+    "core_identity": {
+      "name": "123RF AI Image Generator",
+      "website_url": "https://www.123rf.com/ai-image-generator",
+      "tagline": "Merge human creativity with high-speed AI image synthesis.",
+      "short_description": "An AI-driven image generation tool integrated into the 123RF stock library for custom creative assets.",
+      "full_description": "123RF AI Image Generator is a powerful extension of the **123RF stock photo ecosystem**, allowing users to generate high-quality images from text prompts. Unlike standalone generators, it integrates directly with established creative tools, enabling users to **upload reference images** to guide the AI's output. It is designed to bridge the gap between stock photography and bespoke AI art, ensuring that users can create exactly what they need when a standard stock photo isn't enough. The tool emphasizes **commercial-ready** assets with clear licensing paths within the 123RF platform.",
+      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/2/20/123RF_Logo.png",
+      "operating_systems": ["Web"],
+      "platforms": ["Browser"]
+    },
+    "categorization": {
+      "primary_category": "Image & Art Generation",
+      "subcategory": "AI Text-to-Image",
+      "tags": ["stock-photography", "ai-art", "creative-tools", "commercial-use"],
+      "target_audience": ["Graphic Designers", "Marketers", "Content Creators"],
+      "industry_verticals": ["Advertising", "Media", "Publishing"]
+    },
+    "pricing_and_plans": {
+      "model": "Freemium",
+      "starting_price": 29.00,
+      "currency": "USD",
+      "has_free_tier": true,
+      "has_free_trial": false,
+      "trial_details": "Free users can generate limited images with watermarks.",
+      "pricing_summary": "Subscriptions start at ~$29/mo; pay-as-you-go credits from $5/image."
+    },
+    "expertise_signals": {
+      "skill_level": "Beginner",
+      "learning_curve": "Low",
+      "integrations": ["Pixlr", "Designs.ai"],
+      "api_available": true,
+      "documentation_quality": "Good",
+      "support_options": ["24/7 Support", "Email", "FAQ"],
+      "alternatives": ["Adobe Firefly", "Shutterstock AI", "Midjourney"]
+    },
+    "trust_and_authority": {
+      "company_name": "Inmagine Group",
+      "year_founded": 2005,
+      "headquarters_city": "Chicago",
+      "country": "USA",
+      "employee_count": "201-500",
+      "funding_raised": "null",
+      "notable_customers": ["Global Ad Agencies", "Fortune 500 Marketing Teams"],
+      "has_privacy_policy": true,
+      "gdpr_compliant": true,
+      "security_features": ["Secure Checkout", "Copyright Indemnification"]
+    },
+    "review_and_rating": {
+      "rating_score": 4.2,
+      "pros": [
+        "Vast established library for context and references",
+        "Very intuitive 'reference image' guidance feature",
+        "Legally safe for commercial use via stock licensing"
+      ],
+      "cons": [
+        "Prompt control is less granular than specialized tools like Midjourney",
+        "Free version is heavily limited by watermarks",
+        "Credits can be expensive for high-volume users"
+      ],
+      "best_for": "Marketers who need commercial-safe, custom imagery without leaving their stock workflow.",
+      "not_recommended_for": "Professional AI artists needing complex parameter controls or local generation.",
+      "verdict": "A reliable, professional tool for corporate creative workflows."
+    }
+  },
+  {
+    "core_identity": {
+      "name": "15 Minute Plan",
+      "website_url": "https://www.15minuteplan.ai",
+      "tagline": "Professional AI business plans generated in minutes.",
+      "short_description": "An AI-powered builder that transforms a simple survey into a fully formatted, investor-ready business plan.",
+      "full_description": "15MinutePlan.Ai is a specialized tool designed to solve the 'blank page' problem for entrepreneurs. Using models like **GPT-4**, it employs a **survey-based approach** to extract business goals and market details, then synthesizes them into structured documents including executive summaries and marketing strategies. The platform is notably inclusive, supporting over **150 languages** and providing templates that align with **SBA standards**. While it excels at drafting documents quickly, its value lies in providing a robust starting point that can be further refined with its built-in 'Talk to Plan' AI editor.",
+      "logo_url": "https://www.15minuteplan.ai/logo.png",
+      "operating_systems": ["Web"],
+      "platforms": ["Browser"]
+    },
+    "categorization": {
+      "primary_category": "Business & Productivity",
+      "subcategory": "Business Plan Generator",
+      "tags": ["startup-tools", "entrepreneurship", "business-writing", "gpt-4"],
+      "target_audience": ["Startups", "Small Business Owners", "Consultants"],
+      "industry_verticals": ["Entrepreneurship", "Education", "Consulting"]
+    },
+    "pricing_and_plans": {
+      "model": "Paid",
+      "starting_price": 29.00,
+      "currency": "USD",
+      "has_free_tier": false,
+      "has_free_trial": false,
+      "trial_details": "No free trial; single plan purchase required.",
+      "pricing_summary": "Starts at $29 for a one-time starter business plan."
+    },
+    "expertise_signals": {
+      "skill_level": "Beginner",
+      "learning_curve": "Low",
+      "integrations": ["OpenAI"],
+      "api_available": false,
+      "documentation_quality": "Fair",
+      "support_options": ["Email", "FAQ"],
+      "alternatives": ["Upmetrics", "Bizplanr", "LivePlan"]
+    },
+    "trust_and_authority": {
+      "company_name": "15MinutePlan AI",
+      "year_founded": 2023,
+      "headquarters_city": "null",
+      "country": "null",
+      "employee_count": "1-10",
+      "funding_raised": "null",
+      "notable_customers": ["First-time Entrepreneurs", "Business Students"],
+      "has_privacy_policy": true,
+      "gdpr_compliant": true,
+      "security_features": ["Data Encryption", "Secure Payments"]
+    },
+    "review_and_rating": {
+      "rating_score": 3.9,
+      "pros": [
+        "Unbeatable speed for creating a complete first draft",
+        "Supports an massive range of 150+ languages",
+        "Guided workflow is very beginner-friendly"
+      ],
+      "cons": [
+        "Output can be generic and 'cookie-cutter'",
+        "Lacks advanced financial modeling/forecasting",
+        "No free trial makes it risky for budget-conscious users"
+      ],
+      "best_for": "Entrepreneurs needing a quick document to structure their thoughts or meet a fast deadline.",
+      "not_recommended_for": "Complex enterprises requiring multi-year detailed financial spreadsheets.",
+      "verdict": "Great for speed and initial structure, but requires a human touch for the final pitch."
+    }
+  },
+  {
+    "core_identity": {
+      "name": "16x Prompt",
+      "website_url": "https://prompt.16x.engineer",
+      "tagline": "The ultimate prompt management tool for software engineers.",
+      "short_description": "A desktop application that helps developers manage, version, and refine complex prompts for AI-assisted coding.",
+      "full_description": "16x Prompt is a specialized **desktop tool** designed for high-performance engineers using AI. It focuses on **Source Code Management** for prompts, allowing developers to treat their instructions with the same rigor as their code. It supports **formatting instructions**, version control, and seamless integration with **OpenAI and Anthropic APIs**. By processing all data **locally on your machine**, it addresses critical IP protection concerns that often prevent enterprise teams from using cloud-based prompt managers. It is built to turn prompt engineering from a trial-and-error process into a structured discipline.",
+      "logo_url": "https://prompt.16x.engineer/favicon.ico",
+      "operating_systems": ["Windows", "macOS", "Linux"],
+      "platforms": ["Desktop"]
+    },
+    "categorization": {
+      "primary_category": "Code & Development",
+      "subcategory": "Prompt Engineering Tools",
+      "tags": ["coding-assistant", "developer-tools", "local-ai", "ip-protection"],
+      "target_audience": ["Software Engineers", "DevOps", "AI Researchers"],
+      "industry_verticals": ["Technology", "Enterprise Software"]
+    },
+    "pricing_and_plans": {
+      "model": "Freemium",
+      "starting_price": 48.00,
+      "currency": "USD",
+      "has_free_tier": true,
+      "has_free_trial": false,
+      "trial_details": "Free version limited to 10 prompts per day.",
+      "pricing_summary": "Lifetime individual license for $48. Team licenses available for $68."
+    },
+    "expertise_signals": {
+      "skill_level": "Advanced",
+      "learning_curve": "Moderate",
+      "integrations": ["VS Code", "GitHub", "Anthropic", "OpenAI"],
+      "api_available": true,
+      "documentation_quality": "Good",
+      "support_options": ["Email", "GitHub Issues", "Priority for Teams"],
+      "alternatives": ["Cursor", "Aider", "PromptLayer"]
+    },
+    "trust_and_authority": {
+      "company_name": "16x Prompt",
+      "year_founded": 2024,
+      "headquarters_city": "Singapore",
+      "country": "Singapore",
+      "employee_count": "1-10",
+      "funding_raised": "null",
+      "notable_customers": ["Software Development Agencies", "Independent Devs"],
+      "has_privacy_policy": true,
+      "gdpr_compliant": true,
+      "security_features": ["Local Data Processing", "No Cloud Storage", "Privacy Focused"]
+    },
+    "review_and_rating": {
+      "rating_score": 4.6,
+      "pros": [
+        "Complete privacy with all data processed locally",
+        "Lifetime license model (no recurring subscriptions)",
+        "Deeply specialized features for complex coding workflows"
+      ],
+      "cons": [
+        "Requires users to provide their own API keys",
+        "Free tier is quite restrictive for active daily use",
+        "Desktop only—no mobile or synced cloud option"
+      ],
+      "best_for": "Privacy-conscious developers working on enterprise codebases who need structured prompt management.",
+      "not_recommended_for": "Casual users looking for a simple web-based chatbot experience.",
+      "verdict": "The best 'utility' tool for the power-user developer who values local control."
+    }
+  },
+  {
+    "core_identity": {
+      "name": "2short.ai",
+      "website_url": "https://2short.ai",
+      "tagline": "Turn long videos into captivating short clips 10X faster.",
+      "short_description": "An AI video analysis tool that automatically extracts the best highlights from long-form content for social media.",
+      "full_description": "2short.ai is a specialized **AI video editor** tailored for the short-form era. It uses advanced **video analysis** to automatically identify captivating moments in YouTube videos, podcasts, and vlogs, transforming them into clips optimized for **TikTok, Instagram Reels, and YouTube Shorts**. Key features include **animated subtitles** that boost engagement and **center stage facial tracking** to ensure the speaker remains the focus. It is designed to bridge the gap between heavy long-form production and the rapid-fire demands of social media marketing, allowing creators to multiply their output with minimal manual effort.",
+      "logo_url": "https://2short.ai/logo.png",
+      "operating_systems": ["Web"],
+      "platforms": ["Browser"]
+    },
+    "categorization": {
+      "primary_category": "Video Generation",
+      "subcategory": "Video Clipping & Highlighting",
+      "tags": ["social-media", "content-repurposing", "video-editing", "youtube-shorts"],
+      "target_audience": ["YouTubers", "Podcasters", "Social Media Managers"],
+      "industry_verticals": ["Media", "Entertainment", "Education"]
+    },
+    "pricing_and_plans": {
+      "model": "Freemium",
+      "starting_price": 9.90,
+      "currency": "USD",
+      "has_free_tier": true,
+      "has_free_trial": true,
+      "trial_details": "30 minutes of free AI video analysis per month.",
+      "pricing_summary": "Paid plans start at $9.90/mo for 5 hours of analysis."
+    },
+    "expertise_signals": {
+      "skill_level": "Beginner",
+      "learning_curve": "Low",
+      "integrations": ["YouTube", "Google Drive"],
+      "api_available": false,
+      "documentation_quality": "Good",
+      "support_options": ["Email", "Help Center", "Live Chat"],
+      "alternatives": ["OpusClip", "Munch", "Vizard.ai"]
+    },
+    "trust_and_authority": {
+      "company_name": "2short.ai",
+      "year_founded": 2023,
+      "headquarters_city": "null",
+      "country": "null",
+      "employee_count": "1-10",
+      "funding_raised": "null",
+      "notable_customers": ["Independent Creators", "Digital Content Agencies"],
+      "has_privacy_policy": true,
+      "gdpr_compliant": true,
+      "security_features": ["Data Encryption", "Secure Video Processing"]
+    },
+    "review_and_rating": {
+      "rating_score": 4.4,
+      "pros": [
+        "Extremely easy to use with a one-click generation flow",
+        "Smart facial tracking keeps the content professional",
+        "Huge time-saver for repurposed podcast content"
+      ],
+      "cons": [
+        "Free plan watermarks videos",
+        "Requires high-quality captions in the original for best results",
+        "Limited advanced manual editing tools"
+      ],
+      "best_for": "Creators who want to turn their existing YouTube library into social media gold on autopilot.",
+      "not_recommended_for": "Professional cinematographers needing frame-by-frame color or audio control.",
+      "verdict": "One of the most efficient tools for social media managers and podcasters."
+    }
+  }
+]
