@@ -201,14 +201,14 @@ export default function NeomorphToolModal({ tool, onClose }: NeomorphToolModalPr
           )}
 
           {/* Pricing Details */}
-          {((tool.priceAmount && tool.priceAmount > 0) || tool.pricingModel || tool.hasFreeTrialDays || tool.verdict) && (
+          {((tool.priceAmount && Number(tool.priceAmount) > 0) || tool.pricingModel || tool.hasFreeTrialDays || tool.verdict) && (
             <div className="mb-6 p-4 rounded-xl" style={{ background: 'rgba(34, 197, 94, 0.05)', border: '2px solid rgba(34, 197, 94, 0.15)' }}>
               <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                 <DollarSign className="w-5 h-5 text-green-600" /> Pricing & Value
               </h3>
               <div className="space-y-2 text-sm">
-                {tool.priceAmount && tool.priceAmount > 0 ? (
-                  <p><strong>Starting at:</strong> {tool.priceCurrency || 'USD'} ${tool.priceAmount.toFixed(2)}/mo</p>
+                {tool.priceAmount && Number(tool.priceAmount) > 0 ? (
+                  <p><strong>Starting at:</strong> {tool.priceCurrency || 'USD'} ${Number(tool.priceAmount).toFixed(2)}/mo</p>
                 ) : tool.pricingModel && (
                   <p><strong>Pricing:</strong> <span className="capitalize">{tool.pricingModel}</span></p>
                 )}

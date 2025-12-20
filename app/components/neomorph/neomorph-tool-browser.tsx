@@ -279,8 +279,8 @@ export default function NeomorphToolBrowser({ tools }: NeomorphToolBrowserProps)
                 <div className="mb-6 p-3 rounded-xl bg-green-50/30 border border-green-100">
                   <h4 className="text-sm font-semibold mb-2 flex items-center gap-2"><DollarSign className="w-4 h-4 text-green-600" /> Pricing</h4>
                   <div className="space-y-1 text-sm">
-                    {selectedTool.priceAmount && selectedTool.priceAmount > 0 ? (
-                      <p><strong>{selectedTool.priceCurrency || 'USD'} ${selectedTool.priceAmount.toFixed(2)}/mo</strong></p>
+                    {selectedTool.priceAmount && Number(selectedTool.priceAmount) > 0 ? (
+                      <p><strong>{selectedTool.priceCurrency || 'USD'} ${Number(selectedTool.priceAmount).toFixed(2)}/mo</strong></p>
                     ) : selectedTool.pricingModel && (
                       <p><span className="capitalize">{selectedTool.pricingModel}</span></p>
                     )}
