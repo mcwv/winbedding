@@ -38,18 +38,9 @@ export default function NeomorphNav() {
                         boxShadow: neomorphShadow.raised,
                     }}
                 >
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center gap-3">
-                        <div
-                            className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
-                            style={{
-                                background: '#F0F0F3',
-                                boxShadow: neomorphShadow.pressed,
-                            }}
-                        >
-                            <img src="/images/spinner.gif" alt="Bedwinning" className="w-8 h-8 object-contain" />
-                        </div>
-                        <span className="font-bold text-lg">Bedwinning</span>
+                    {/* Logo - Big text style */}
+                    <Link href="/" className="flex items-center">
+                        <img src="/images/spinner.gif" alt="Bedwinning" className="h-12 md:h-16 object-contain" />
                     </Link>
 
                     {/* Nav Items */}
