@@ -41,13 +41,13 @@ export default function NeomorphNav() {
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-3">
                         <div
-                            className="w-10 h-10 rounded-xl flex items-center justify-center"
+                            className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
                             style={{
                                 background: '#F0F0F3',
                                 boxShadow: neomorphShadow.pressed,
                             }}
                         >
-                            <span className="text-xl">🛏️</span>
+                            <img src="/images/spinner.gif" alt="Bedwinning" className="w-8 h-8 object-contain" />
                         </div>
                         <span className="font-bold text-lg">Bedwinning</span>
                     </Link>
