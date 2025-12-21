@@ -30,3 +30,12 @@ body {
   min-height: 100vh;
   font-family: system-ui, -apple-system, sans-serif;
 }
+
+/* Hide scrollbars but keep functionality */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}

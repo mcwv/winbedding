@@ -12,13 +12,14 @@ interface NeomorphToolBrowserProps {
 
 const neomorphShadow = {
   raised: `
-    8px 8px 16px rgba(209, 217, 230, 0.8),
-    -8px -8px 16px rgba(255, 255, 255, 0.8)
+    4px 4px 8px rgba(209, 217, 230, 0.5),
+    -4px -4px 8px rgba(255, 255, 255, 0.5)
   `,
   pressed: `
-    inset 4px 4px 8px rgba(209, 217, 230, 0.7),
-    inset -4px -4px 8px rgba(255, 255, 255, 0.7)
+    inset 2px 2px 4px rgba(209, 217, 230, 0.4),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.4)
   `,
+  flat: 'none',
 }
 
 const TOOLS_PER_PAGE = 20

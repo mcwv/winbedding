@@ -40,7 +40,7 @@ export default function NeomorphNav() {
                 >
                     {/* Logo - Big text style */}
                     <Link href="/" className="flex items-center">
-                        <img src="/images/spinner.gif" alt="Bedwinning" className="h-12 md:h-16 object-contain" />
+                        <img src="/images/spinner.gif" alt="Bedwinning" className="h-14 md:h-20 object-contain" />
                     </Link>
 
                     {/* Nav Items */}
