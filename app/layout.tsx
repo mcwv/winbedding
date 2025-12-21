@@ -2,8 +2,11 @@ import type { Metadata } from "next"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Neo-Bed - Neumorphic Job Board",
-  description: "A beautiful neumorphic design experiment for job listings",
+  title: "Bedwinning",
+  description: "Discover the best AI tools for smart builders",
+  icons: {
+    icon: '/favicon.png',
+  },
 }
 
 export default function RootLayout({
