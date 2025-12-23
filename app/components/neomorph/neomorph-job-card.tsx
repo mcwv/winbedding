@@ -86,7 +86,7 @@ export default function NeomorphJobCard({
                     style={{
                         background: '#F0F0F3',
                         boxShadow: neomorphShadow.pressed,
-                        color: '#22c55e',
+                        color: '#4f46e5',
                     }}
                 >
                     {salary}

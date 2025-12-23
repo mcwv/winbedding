@@ -48,30 +48,12 @@ export default function HeroGridNeomorph({ jobCount, salaryJobs }: HeroGridNeomo
 
     return (
         <section className="relative py-12">
-            {/* Add breathing animation styles */}
-            <style jsx>{`
-                @keyframes breathe {
-                    0%, 100% { transform: scale(1); }
-                    50% { transform: scale(1.005); }
-                }
-                @keyframes pulse-shadow {
-                    0%, 100% { filter: brightness(1); }
-                    50% { filter: brightness(1.02); }
-                }
-                .breathing {
-                    animation: breathe 4s ease-in-out infinite;
-                }
-                .pulse {
-                    animation: pulse-shadow 3s ease-in-out infinite;
-                }
-            `}</style>
             <div className="container mx-auto px-4 max-w-7xl">
                 <div className="grid lg:grid-cols-5 gap-8 items-start">
                     {/* Left Column: Hero + Search */}
                     <div className="lg:col-span-3">
-                        {/* Main Neumorphic Card - NOW BREATHING */}
                         <div
-                            className="rounded-3xl p-8 md:p-12 breathing"
+                            className="rounded-3xl p-8 md:p-12"
                             style={{
                                 background: '#F0F0F3',
                                 boxShadow: neomorphShadow.raised,
@@ -84,7 +66,7 @@ export default function HeroGridNeomorph({ jobCount, salaryJobs }: HeroGridNeomo
                                     style={{
                                         background: '#F0F0F3',
                                         boxShadow: neomorphShadow.flat,
-                                        color: '#22c55e',
+                                        color: '#4f46e5',
                                     }}
                                 >
                                     <TrendingUp className="w-3 h-3" />
@@ -94,7 +76,7 @@ export default function HeroGridNeomorph({ jobCount, salaryJobs }: HeroGridNeomo
                                 {/* Headline */}
                                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-balance leading-[1.1]">
                                     Soft landings for{" "}
-                                    <span style={{ color: '#22c55e' }}>smart builders.</span>
+                                    <span style={{ color: '#4f46e5' }}>smart builders.</span>
                                 </h1>
 
                                 <p className="text-lg text-muted-foreground text-pretty max-w-lg leading-relaxed">
@@ -147,10 +129,10 @@ export default function HeroGridNeomorph({ jobCount, salaryJobs }: HeroGridNeomo
                         </div>
                     </div>
 
-                    {/* Right Column: Stats Card - PULSING */}
+                    {/* Right Column: Stats Card */}
                     <div className="lg:col-span-2">
                         <div
-                            className="rounded-3xl p-8 pulse"
+                            className="rounded-3xl p-8"
                             style={{
                                 background: '#F0F0F3',
                                 boxShadow: neomorphShadow.raised,
@@ -160,7 +142,7 @@ export default function HeroGridNeomorph({ jobCount, salaryJobs }: HeroGridNeomo
                                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
                                     AI Tools
                                 </h3>
-                                <p className="text-6xl font-bold" style={{ color: '#22c55e' }}>
+                                <p className="text-6xl font-bold" style={{ color: '#4f46e5' }}>
                                     {jobCount}
                                 </p>
                                 <p className="text-sm text-muted-foreground">

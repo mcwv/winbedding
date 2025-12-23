@@ -1,10 +1,39 @@
-import NeomorphNav from "@/app/components/neomorph/neomorph-nav"
+import { Metadata } from 'next'
+import NeomorphHeader from "@/app/components/neomorph/neomorph-header"
 import NeomorphToolBrowser from "@/app/components/neomorph/neomorph-tool-browser"
-import { getAllTools, getToolCount } from "@/app/lib/db"
+import { getAllTools } from "@/app/lib/db"
 
-export const dynamic = 'force-dynamic' // Ensure fresh data from DB
+export const dynamic = 'force-dynamic'
 
-export default async function HomePage() {
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ q?: string; c?: string }> }): Promise<Metadata> {
+  const { q, c } = await searchParams
+
+  let title = "Bedwinning | AI Tool Index"
+  let description = "Discover the best AI tools for builders, creators, and entrepreneurs."
+
+  if (q && c && c !== 'all') {
+    title = `${q} tools in ${c} | Bedwinning`
+  } else if (q) {
+    title = `Search: ${q} | Bedwinning AI Index`
+  } else if (c && c !== 'all') {
+    title = `Best ${c} AI Tools | Bedwinning`
+  }
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: ['/favicon.png'],
+    },
+  }
+}
+
+export default async function HomePage({ searchParams }: { searchParams: Promise<{ q?: string; c?: string }> }) {
+  // Wait for search params
+  await searchParams
+
   // Load tools from PostgreSQL database
   let tools: any[] = []
   let toolCount = 0
@@ -12,7 +41,7 @@ export default async function HomePage() {
 
   try {
     tools = await getAllTools()
-    toolCount = await getToolCount()
+    toolCount = tools.length
   } catch (e: any) {
     error = e.message || 'Database connection failed'
     console.error('Database error:', e)
@@ -31,11 +60,13 @@ export default async function HomePage() {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden" style={{ background: '#F0F0F3' }}>
-      <NeomorphNav />
+      <NeomorphHeader />
 
       {/* Tool Browser - fills remaining space */}
-      <div className="flex-1 container mx-auto px-4 py-4 overflow-hidden">
-        <NeomorphToolBrowser tools={tools} />
+      <div className="flex-1 overflow-hidden pb-4">
+        <div className="container mx-auto px-4 h-full max-w-7xl">
+          <NeomorphToolBrowser tools={tools} />
+        </div>
       </div>
     </div>
   )

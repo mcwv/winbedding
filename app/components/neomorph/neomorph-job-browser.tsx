@@ -52,7 +52,7 @@ export default function NeomorphJobBrowser({ jobs }: NeomorphJobBrowserProps) {
                                 style={{
                                     background: '#F0F0F3',
                                     boxShadow: selectedJob?.id === job.id ? neomorphShadow.pressed : neomorphShadow.raised,
-                                    border: selectedJob?.id === job.id ? '2px solid #22c55e' : '2px solid transparent',
+                                    border: selectedJob?.id === job.id ? '2px solid #4f46e5' : '2px solid transparent',
                                 }}
                             >
                                 <h3 className="font-semibold text-sm mb-1 line-clamp-1">{job.title}</h3>
@@ -62,7 +62,7 @@ export default function NeomorphJobBrowser({ jobs }: NeomorphJobBrowserProps) {
                                         <MapPin className="w-3 h-3" />
                                         {job.location}
                                     </span>
-                                    <span className="font-semibold" style={{ color: '#22c55e' }}>{job.salary}</span>
+                                    <span className="font-semibold" style={{ color: '#4f46e5' }}>{job.salary}</span>
                                 </div>
                             </button>
                         ))}
@@ -99,8 +99,8 @@ export default function NeomorphJobBrowser({ jobs }: NeomorphJobBrowserProps) {
                                     <span>{selectedJob.postedDate}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <DollarSign className="w-4 h-4" style={{ color: '#22c55e' }} />
-                                    <span className="font-semibold" style={{ color: '#22c55e' }}>{selectedJob.salary}</span>
+                                    <DollarSign className="w-4 h-4" style={{ color: '#4f46e5' }} />
+                                    <span className="font-semibold" style={{ color: '#4f46e5' }}>{selectedJob.salary}</span>
                                 </div>
                             </div>
                         </div>
@@ -135,7 +135,7 @@ export default function NeomorphJobBrowser({ jobs }: NeomorphJobBrowserProps) {
                             style={{
                                 background: '#F0F0F3',
                                 boxShadow: neomorphShadow.raised,
-                                color: '#22c55e',
+                                color: '#4f46e5',
                             }}
                         >
                             Apply Now

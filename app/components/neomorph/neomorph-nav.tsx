@@ -20,68 +20,56 @@ export default function NeomorphNav() {
 
     const navItems = [
         { label: "Home", icon: Home, href: "/" },
-        { label: "Tools", icon: Sparkles, href: "/tools" },
-        { label: "Categories", icon: Tags, href: "#" },
-        { label: "About", icon: UserCircle, href: "#" },
+        { label: "Tools", icon: Sparkles, href: "/" },
+        { label: "Categories", icon: Tags, href: "/categories" },
+        { label: "About", icon: UserCircle, href: "/about" },
     ]
 
     return (
-        <nav
-            className="sticky top-0 z-50 py-4"
-            style={{ background: '#F0F0F3' }}
+        <div
+            className="rounded-2xl p-4 flex items-center justify-between w-full"
+            style={{
+                background: '#F0F0F3',
+                boxShadow: neomorphShadow.raised,
+            }}
         >
-            <div className="container mx-auto px-4 max-w-7xl">
-                <div
-                    className="rounded-2xl p-4 flex items-center justify-between"
-                    style={{
-                        background: '#F0F0F3',
-                        boxShadow: neomorphShadow.raised,
-                    }}
-                >
-                    {/* Logo - Big text style */}
-                    <Link href="/" className="flex items-center">
-                        <img src="/images/spinner.gif" alt="Bedwinning" className="h-14 md:h-20 object-contain" />
-                    </Link>
-
-                    {/* Nav Items */}
-                    <div className="hidden md:flex items-center gap-2">
-                        {navItems.map((item) => {
-                            const Icon = item.icon
-                            const isActive = pathname === item.href
-                            return (
-                                <Link
-                                    key={item.label}
-                                    href={item.href}
-                                    className="px-4 py-2 rounded-xl text-sm font-medium transition-all hover:scale-105"
-                                    style={{
-                                        background: '#F0F0F3',
-                                        boxShadow: isActive ? neomorphShadow.pressed : neomorphShadow.raised,
-                                        color: isActive ? '#22c55e' : '#71717a',
-                                    }}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <Icon className="w-4 h-4" />
-                                        {item.label}
-                                    </div>
-                                </Link>
-                            )
-                        })}
-                    </div>
-
-                    {/* CTA Button */}
-                    <Link
-                        href="#"
-                        className="px-5 py-2 rounded-xl text-sm font-semibold hover:scale-105 transition-transform"
-                        style={{
-                            background: '#F0F0F3',
-                            boxShadow: neomorphShadow.raised,
-                            color: '#22c55e',
-                        }}
-                    >
-                        Submit Tool
-                    </Link>
-                </div>
+            {/* Nav Items - Neutralized & Indigo Accent */}
+            <div className="flex items-center gap-2">
+                {navItems.map((item) => {
+                    const Icon = item.icon
+                    const isActive = pathname === item.href
+                    return (
+                        <Link
+                            key={item.label}
+                            href={item.href}
+                            className="px-4 py-2 rounded-xl text-sm font-medium transition-all"
+                            style={{
+                                background: '#F0F0F3',
+                                boxShadow: isActive ? neomorphShadow.pressed : neomorphShadow.raised,
+                                color: isActive ? '#4f46e5' : '#71717a',
+                            }}
+                        >
+                            <div className="flex items-center gap-2">
+                                <Icon className="w-4 h-4" />
+                                {item.label}
+                            </div>
+                        </Link>
+                    )
+                })}
             </div>
-        </nav>
+
+            {/* CTA Button - Indigo Accent */}
+            <Link
+                href="/submit"
+                className="px-5 py-2 rounded-xl text-sm font-semibold transition-all"
+                style={{
+                    background: '#F0F0F3',
+                    boxShadow: neomorphShadow.raised,
+                    color: '#4f46e5',
+                }}
+            >
+                Submit Tool
+            </Link>
+        </div>
     )
 }

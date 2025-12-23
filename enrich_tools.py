@@ -29,7 +29,6 @@ DB_CONFIG = {
 # ==========================================
 
 class ToolAnalysis(typing.TypedDict):
-    """What AI can realistically extract from a website"""
     
     # Core Identity
     name: str
@@ -97,10 +96,7 @@ class ToolAnalysis(typing.TypedDict):
 # ==========================================
 
 def calculate_transparency_score(data: dict) -> int:
-    """
-    0-100: How transparent/trustworthy the tool appears
-    Based on available information and pricing clarity
-    """
+
     score = 0
     
     # Pricing transparency (40 points)
@@ -133,10 +129,7 @@ def calculate_transparency_score(data: dict) -> int:
     return min(score, 100)
 
 def calculate_experience_score(data: dict) -> float:
-    """
-    0-10: Predicted user experience quality
-    Based on ease of use, support, and learning curve
-    """
+
     score = 5.0  # Start neutral
     
     # Learning curve impact (max ±2 points)
@@ -166,10 +159,7 @@ def calculate_experience_score(data: dict) -> float:
     return round(max(0, min(score, 10)), 1)
 
 def calculate_quality_score(data: dict) -> int:
-    """
-    0-100: Overall data quality and completeness
-    This is a META score about the enrichment quality itself
-    """
+
     score = 0
     required_fields = 0
     filled_fields = 0
@@ -215,27 +205,24 @@ def calculate_quality_score(data: dict) -> int:
 def get_db_connection():
     return psycopg2.connect(**DB_CONFIG)
 
-def fetch_pending_tools(limit=5):
-    """Get tools marked as 'pending' for enrichment"""
-    conn = get_db_connection()
-    try:
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute("""
-                SELECT id, name, slug, website_url 
-                FROM tools 
-                WHERE enrichment_status = 'pending' 
-                ORDER BY created_at ASC
-                LIMIT %s
-            """, (limit,))
-            return cur.fetchall()
-    finally:
-        conn.close()
+    def fetch_pending_tools(limit=5):
+
+        conn = get_db_connection()
+        try:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                cur.execute("""
+                    SELECT id, name, slug, website_url 
+                    FROM tools 
+                    WHERE enrichment_status = 'pending' 
+                    ORDER BY created_at ASC
+                    LIMIT %s
+                """, (limit,))
+                return cur.fetchall()
+        finally:
+            conn.close()
 
 def save_enriched_tool(tool_id: int, data: dict):
-    """
-    Save AI-extracted data to database
-    Maps AI output to actual DB columns
-    """
+
     conn = get_db_connection()
     
     try:
@@ -405,9 +392,7 @@ def mark_tool_failed(tool_id: int, error: str):
 # ==========================================
 
 def build_extraction_prompt(tool_name: str, markdown: str) -> str:
-    """
-    Shorter, example-driven prompt that actually works
-    """
+
 
     return f"""Extract structured information about "{tool_name}" from the website content below.
 
@@ -495,9 +480,7 @@ Return valid JSON. Be factual and specific. If you don't see information clearly
 groq_client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 async def analyze_tool(tool_name: str, url: str, markdown: str) -> dict:
-    """
-    Run AI analysis on scraped content using Groq
-    """
+
     try:
         # Reuse your existing prompt builder (it works fine for Llama)
         prompt = build_extraction_prompt(tool_name, markdown)
@@ -534,9 +517,8 @@ async def analyze_tool(tool_name: str, url: str, markdown: str) -> dict:
         raise Exception(f"AI analysis failed: {e}")
 
 def enhance_data_quality(data: dict, tool_name: str, url: str) -> dict:
-    """
-    Post-process AI output to fix common issues and improve quality
-    """
+
+
     
     # Fix tagline if it's generic garbage
     tagline = data.get('tagline', '').lower()
@@ -615,7 +597,7 @@ def enhance_data_quality(data: dict, tool_name: str, url: str) -> dict:
     if 'update_frequency' in data:
         freq = str(data['update_frequency']).lower()
         valid_freq = ['daily', 'weekly', 'monthly', 'quarterly', 'yearly', 'unknown']
-        data['update_frequency'] = next((f for f in valid_freq if f in freq), 'unknown')
+        data['update_frequency'] = next((f for f in valid_freq if f in freq), 'unknown')"""
     
     return data
 
@@ -624,9 +606,7 @@ def enhance_data_quality(data: dict, tool_name: str, url: str) -> dict:
 # ==========================================
 
 async def process_tool(crawler, tool):
-    """
-    Complete enrichment pipeline for a single tool
-    """
+
     print(f"\n{'='*60}")
     print(f"🔍 {tool['name']}")
     print(f"   URL: {tool['website_url']}")
@@ -683,10 +663,10 @@ async def process_tool(crawler, tool):
         mark_tool_failed(tool['id'], str(e))
 
 async def main():
-    """
+
     Main event loop
     Continuously processes pending tools
-    """
+    
     
     print("="*60)
     print("🚀 BEDWINNING ENRICHMENT ENGINE")

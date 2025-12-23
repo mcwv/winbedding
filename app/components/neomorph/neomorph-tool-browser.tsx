@@ -1,9 +1,11 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
+import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import ReactMarkdown from 'react-markdown'
-import { Star, Heart, Search, Filter, ExternalLink, Tag as TagIcon, DollarSign, CheckCircle, Shield, Building, Lock, ChevronLeft, ChevronRight, Users, Code, Building2, Award, Target, Zap } from "lucide-react"
+import { Star, ExternalLink, Shield, Zap, Code, Target, CheckCircle, Building2, Lock, Users, Award, Image as ImageIcon, Tag } from "lucide-react"
 import { Tool } from "@/app/types/tool"
+import { expandQuery, matchesQuery, calculateRelevanceScore } from "@/app/lib/searchUtils"
 import { MAIN_CATEGORIES } from "@/app/lib/categoryMapping"
 
 interface NeomorphToolBrowserProps {
@@ -12,12 +14,12 @@ interface NeomorphToolBrowserProps {
 
 const neomorphShadow = {
   raised: `
-    4px 4px 8px rgba(209, 217, 230, 0.5),
-    -4px -4px 8px rgba(255, 255, 255, 0.5)
+    8px 8px 16px rgba(209, 217, 230, 0.8),
+    -8px -8px 16px rgba(255, 255, 255, 0.8)
   `,
   pressed: `
-    inset 2px 2px 4px rgba(209, 217, 230, 0.4),
-    inset -2px -2px 4px rgba(255, 255, 255, 0.4)
+    inset 4px 4px 8px rgba(209, 217, 230, 0.7),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.7)
   `,
   flat: 'none',
 }
@@ -46,118 +48,105 @@ const getFaviconUrl = (websiteUrl: string | null | undefined, size: number = 64)
 
 // Map tool names to local image files
 const localThumbMap: Record<string, string> = {
-  '10Web': '/tool-thumbs/10w.png',
+  '10web': '/tool-thumbs/10w.png',
   '2short.ai': '/tool-thumbs/2short.png',
-  '123RF AI Image Generator': '/tool-thumbs/123rf.png',
-  '15 Minute Plan': '/tool-thumbs/15minplan.jpg',
+  '123rf ai image generator': '/tool-thumbs/123rf.png',
+  '15 minute plan': '/tool-thumbs/15minplan.jpg',
 }
 
 const localImgMap: Record<string, string> = {
-  '10Web': '/tool-img/10web.jpg',
+  '10web': '/tool-img/10web.jpg',
   '2short.ai': '/tool-img/2short.ai.png',
-  '123RF AI Image Generator': '/tool-img/123rf.png',
-  '15 Minute Plan': '/tool-img/15minplan.png',
+  '123rf ai image generator': '/tool-img/123rf.png',
+  '15 minute plan': '/tool-img/15minplan.png',
 }
 
 const getToolThumb = (tool: Tool): string | null => {
-  // Check local thumbs first
-  if (localThumbMap[tool.name]) return localThumbMap[tool.name]
-  if (isValidImageUrl(tool.thumbnail)) return tool.thumbnail!
-  if (isValidImageUrl(tool.logo)) return tool.logo!
-  return getFaviconUrl(tool.visitURL || tool.affiliateURL, 64)
+  const nameKey = tool.name.toLowerCase().trim()
+  if (localThumbMap[nameKey]) return localThumbMap[nameKey]
+  return tool.logoUrl || getFaviconUrl(tool.visitURL, 128)
 }
 
-const getToolBgImage = (tool: Tool): string | null => {
-  // Check local images first
-  if (localImgMap[tool.name]) return localImgMap[tool.name]
-  return null
+const getToolPreviewImage = (tool: Tool): string | null => {
+  if (!tool) return null
+  const nameKey = tool.name.toLowerCase().trim()
+  if (localImgMap[nameKey]) return localImgMap[nameKey]
+  return tool.imageUrl || null
 }
 
 export default function NeomorphToolBrowser({ tools }: NeomorphToolBrowserProps) {
-  const [selectedTool, setSelectedTool] = useState<Tool | null>(tools[0] || null)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [visibleCount, setVisibleCount] = useState(30)  // Start with 30 tools
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchQuery = searchParams.get("q") || ""
+  const selectedCategory = searchParams.get("c") || "all"
 
-  const categories = useMemo(() => ["all", ...MAIN_CATEGORIES], [])
+  const [selectedTool, setSelectedTool] = useState<Tool | null>(null)
+  const [visibleCount, setVisibleCount] = useState(30)
+
+  const handleTagClick = (tag: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('q', tag)
+    router.push(`${pathname}?${params.toString()}`)
+  }
 
   const filteredTools = useMemo(() => {
-    const filtered = tools.filter(tool => {
-      // Robust search
-      const q = searchQuery.toLowerCase()
-      const matchesSearch = tool.name?.toLowerCase().includes(q) ||
-        tool.shortDescription?.toLowerCase().includes(q) ||
-        (tool.description && tool.description.toLowerCase().includes(q)) ||
-        (tool.tags && tool.tags.some(tag => tag?.toLowerCase().includes(q)))
+    if (!tools) return []
 
-      const matchesCategory = selectedCategory === "all" || tool.mappedCategory === selectedCategory
+    const filtered = tools.filter(tool => {
+      const matchesSearch = searchQuery === "" || matchesQuery(tool, searchQuery)
+      const matchesCategory = selectedCategory === "all" || tool.category === selectedCategory
       return matchesSearch && matchesCategory
     })
 
-    // Reset visible count when filters change
-    setVisibleCount(30)
+    if (searchQuery !== "") {
+      return [...filtered].sort((a, b) => {
+        const scoreA = calculateRelevanceScore(a, searchQuery)
+        const scoreB = calculateRelevanceScore(b, searchQuery)
+        return scoreB - scoreA
+      })
+    }
 
     return filtered
   }, [tools, searchQuery, selectedCategory])
 
-  // Visible tools (infinite scroll)
+  useEffect(() => {
+    setVisibleCount(30)
+    if (filteredTools.length > 0) {
+      setSelectedTool(filteredTools[0])
+    } else {
+      setSelectedTool(null)
+    }
+  }, [filteredTools])
+
   const visibleTools = filteredTools.slice(0, visibleCount)
 
-  // Handle scroll to load more
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget
     if (scrollHeight - scrollTop <= clientHeight + 100) {
-      // Near bottom, load more
       if (visibleCount < filteredTools.length) {
         setVisibleCount(prev => Math.min(prev + 20, filteredTools.length))
       }
     }
   }
 
-  // Check if descriptive text is redundant
-  const isDescriptionRedundant = selectedTool && selectedTool.description && selectedTool.shortDescription &&
-    selectedTool.description.startsWith(selectedTool.shortDescription.substring(0, 50))
-
   return (
-    <div className="flex flex-col h-full space-y-4">
-      {/* Search and Filter Bar */}
-      <div className="grid md:grid-cols-2 gap-4">
-        {/* Search */}
-        <div className="rounded-2xl p-4 flex items-center gap-3" style={{ background: '#F0F0F3', boxShadow: neomorphShadow.pressed }}>
-          <Search className="w-5 h-5 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search tools..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 bg-transparent outline-none text-sm"
-          />
-        </div>
-
-        {/* Category Filter */}
-        <div className="rounded-2xl p-4" style={{ background: '#F0F0F3', boxShadow: neomorphShadow.pressed }}>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full bg-transparent outline-none text-sm"
-          >
-            {categories.map(cat => (
-              <option key={cat} value={cat}>{cat === "all" ? "All Categories" : cat}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between text-xs text-muted-foreground flex-shrink-0">
-        <span>{filteredTools.length} tools found</span>
-        {visibleCount < filteredTools.length && (
-          <span className="text-green-600">Scroll for more...</span>
-        )}
-      </div>
-
+    <div className="flex flex-col h-full space-y-4 w-full">
       <div className="grid lg:grid-cols-5 gap-6 flex-1 overflow-hidden">
-        {/* Left: Tool List - scrolls independently */}
-        <div className="lg:col-span-2 flex flex-col overflow-hidden">
+        {/* Left: Tool List */}
+        <div className="lg:col-span-2 flex flex-col overflow-hidden space-y-4">
+          <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 px-1">
+            <span>{filteredTools.length} tools indexed</span>
+            {(searchQuery || selectedCategory !== 'all') && (
+              <button
+                onClick={() => router.push(pathname)}
+                className="text-indigo-500 hover:text-indigo-600 transition-colors"
+              >
+                Reset All
+              </button>
+            )}
+          </div>
+
           <div
             className="rounded-2xl p-4 flex-1 overflow-y-auto"
             style={{ background: '#F0F0F3', boxShadow: neomorphShadow.pressed }}
@@ -172,36 +161,17 @@ export default function NeomorphToolBrowser({ tools }: NeomorphToolBrowserProps)
                   style={{
                     background: '#F0F0F3',
                     boxShadow: selectedTool?.id === tool.id ? neomorphShadow.pressed : neomorphShadow.raised,
-                    border: selectedTool?.id === tool.id ? '2px solid #22c55e' : '2px solid transparent',
+                    border: selectedTool?.id === tool.id ? '2px solid #4f46e5' : '2px solid transparent',
                   }}
                 >
-                  <div className="flex gap-3 mb-2">
-                    {(() => {
-                      const imageUrl = getToolThumb(tool)
-                      return imageUrl ? (
-                        <img src={imageUrl} alt="" className="w-10 h-10 rounded-lg object-contain flex-shrink-0 bg-white" onError={(e) => (e.target as HTMLImageElement).style.display = 'none'} />
-                      ) : null
-                    })()}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-sm mb-1 line-clamp-1">{tool.name}</h3>
-                      <div className="flex flex-col gap-1">
-                        <p className="text-xs font-medium text-green-600 line-clamp-1">{tool.mappedCategory || tool.category}</p>
-                        {tool.shortDescription && (
-                          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed opacity-90">
-                            {tool.shortDescription.replace(/^#+\s*/, '').replace(/\*\*/g, '')}
-                          </p>
-                        )}
-                      </div>
+                  <div className="flex gap-4 items-center">
+                    <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-white p-1" style={{ boxShadow: neomorphShadow.pressed }}>
+                      <img src={getToolThumb(tool)!} alt="" className="w-full h-full object-contain" />
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3 text-xs">
-                    {tool.rating > 0 && (
-                      <span className="flex items-center gap-1"><Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />{tool.rating.toFixed(1)}</span>
-                    )}
-                    {/* Quality Score Indicator - little dot */}
-                    {tool.qualityScore && tool.qualityScore > 70 && (
-                      <span className="w-2 h-2 rounded-full bg-green-500" title="High Quality Tool"></span>
-                    )}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-sm mb-0.5 line-clamp-1">{tool.name}</h3>
+                      <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">{tool.category}</p>
+                    </div>
                   </div>
                 </button>
               ))}
@@ -209,241 +179,98 @@ export default function NeomorphToolBrowser({ tools }: NeomorphToolBrowserProps)
           </div>
         </div>
 
-        {/* Right: Tool Detail */}
-        <div className="lg:col-span-3 flex flex-col overflow-hidden">
+        {/* Right: Detail View */}
+        <div className="lg:col-span-3 flex flex-col overflow-hidden space-y-4">
           {selectedTool ? (
             <div
-              className="rounded-2xl flex-1 overflow-y-auto relative"
+              className="rounded-3xl flex-1 overflow-y-auto relative"
               style={{
                 background: '#F0F0F3',
                 boxShadow: neomorphShadow.raised,
               }}
             >
-              {/* Background Image */}
-              {getToolBgImage(selectedTool) && (
-                <div
-                  className="absolute inset-0 opacity-10 bg-cover bg-center rounded-2xl"
-                  style={{ backgroundImage: `url(${getToolBgImage(selectedTool)})` }}
-                />
-              )}
-
-              <div className="relative p-8">
-                {/* Header */}
-                <div className="mb-6">
-                  <div className="flex items-start gap-4 mb-4">
-                    {(() => {
-                      const imageUrl = getToolThumb(selectedTool)
-                      return imageUrl ? (
-                        <img src={imageUrl} alt="" className="w-20 h-20 rounded-xl object-contain bg-white p-2" style={{ boxShadow: neomorphShadow.pressed }} onError={(e) => (e.target as HTMLImageElement).style.display = 'none'} />
-                      ) : null
-                    })()}
-                    <div className="flex-1">
-                      <h2 className="text-2xl font-bold mb-2">{selectedTool.name}</h2>
-                      {/* Show short description ONLY if meaningful and distinct */}
-                      {!isDescriptionRedundant && selectedTool.shortDescription && (
-                        <p className="text-lg text-muted-foreground mb-2">{selectedTool.shortDescription}</p>
-                      )}
-
-                      <div className="flex flex-wrap items-center gap-3 text-sm">
-                        <span className="px-3 py-1 rounded-lg bg-blue-100 text-blue-700 font-medium">
-                          {selectedTool.mappedCategory || selectedTool.category}
-                        </span>
-                        {selectedTool.isVerified && <span className="px-3 py-1 rounded-lg bg-green-100 text-green-700 font-medium">Verified</span>}
-                        {/* Trust Badges */}
-                        {selectedTool.hasPrivacyPolicy && <span className="flex items-center gap-1 px-2 py-0.5 text-xs rounded bg-gray-200 text-gray-600"><Shield className="w-3 h-3" /> Privacy Policy</span>}
-                      </div>
-                    </div>
+              <div className="p-8 md:p-10 space-y-10">
+                <div className="flex items-start gap-8">
+                  <div className="w-32 h-32 rounded-3xl flex items-center justify-center flex-shrink-0 p-6 bg-white" style={{ boxShadow: neomorphShadow.pressed }}>
+                    <img
+                      src={getToolThumb(selectedTool)!}
+                      alt=""
+                      className="w-full h-full object-contain"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedTool.name)}&background=4f46e5&color=fff&bold=true&size=128`
+                      }}
+                    />
                   </div>
+                  <div className="flex-1 min-w-0 pt-2">
+                    <p className="text-xs font-black uppercase tracking-[0.2em] text-indigo-600/60 mb-2">
+                      {selectedTool.category}
+                    </p>
+                    <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-6">{selectedTool.name}</h2>
 
-                  <div className="flex flex-wrap gap-4 text-sm mb-4">
-                    <div className="flex items-center gap-2">
-                      <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold">{(selectedTool.rating || 0).toFixed(2)}</span>
-                      {selectedTool.reviewCount && selectedTool.reviewCount > 0 ? (
-                        <span className="text-muted-foreground">({selectedTool.reviewCount} reviews)</span>
-                      ) : null}
-                    </div>
+                    <a
+                      href={selectedTool.visitURL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex px-8 py-3.5 rounded-2xl items-center gap-2 text-sm font-black transition-all active:scale-95"
+                      style={{ background: '#F0F0F3', boxShadow: neomorphShadow.raised, color: '#4f46e5' }}
+                    >
+                      Open Website
+                      <ExternalLink className="w-4 h-4 stroke-[3px]" />
+                    </a>
                   </div>
-
-                  <a
-                    href={selectedTool.affiliateURL || selectedTool.visitURL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold hover:scale-[1.02] transition-transform"
-                    style={{ background: '#F0F0F3', boxShadow: neomorphShadow.raised, color: '#22c55e' }}
-                  >
-                    Visit Website
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
                 </div>
 
-                {/* Pros & Cons (E-E-A-T) */}
-                {(selectedTool.pros?.length || 0 > 0 || (selectedTool.cons?.length || 0 > 0)) && (
-                  <div className="grid md:grid-cols-2 gap-4 mb-6">
-                    {selectedTool.pros && selectedTool.pros.length > 0 && (
-                      <div className="p-4 rounded-xl bg-green-50/50 border border-green-100">
-                        <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-2"><CheckCircle className="w-4 h-4" /> Pros</h4>
-                        <ul className="list-disc list-inside text-sm text-green-900">
-                          {selectedTool.pros.map(p => <li key={p}>{p}</li>)}
-                        </ul>
-                      </div>
-                    )}
-                    {selectedTool.cons && selectedTool.cons.length > 0 && (
-                      <div className="p-4 rounded-xl bg-red-50/50 border border-red-100">
-                        <h4 className="font-semibold text-red-800 mb-2 flex items-center gap-2"><Shield className="w-4 h-4" /> Cons</h4>
-                        <ul className="list-disc list-inside text-sm text-red-900">
-                          {selectedTool.cons.map(c => <li key={c}>{c}</li>)}
-                        </ul>
-                      </div>
-                    )}
+                {/* Screenshot */}
+                {getToolPreviewImage(selectedTool) && (
+                  <div className="rounded-[2rem] overflow-hidden p-3" style={{ background: '#F0F0F3', boxShadow: neomorphShadow.pressed }}>
+                    <img
+                      src={getToolPreviewImage(selectedTool)!}
+                      alt=""
+                      className="w-full h-auto rounded-[1.2rem] shadow-sm"
+                      onError={(e) => (e.target as HTMLImageElement).parentElement?.remove()}
+                    />
                   </div>
                 )}
 
-                {/* Pricing Details */}
-                {((selectedTool.priceAmount && selectedTool.priceAmount > 0) || selectedTool.pricingModel || selectedTool.hasFreeTrialDays || selectedTool.verdict) && (
-                  <div className="mb-6 p-3 rounded-xl bg-green-50/30 border border-green-100">
-                    <h4 className="text-sm font-semibold mb-2 flex items-center gap-2"><DollarSign className="w-4 h-4 text-green-600" /> Pricing</h4>
-                    <div className="space-y-1 text-sm">
-                      {selectedTool.priceAmount && Number(selectedTool.priceAmount) > 0 ? (
-                        <p><strong>{selectedTool.priceCurrency || 'USD'} ${Number(selectedTool.priceAmount).toFixed(2)}/mo</strong></p>
-                      ) : selectedTool.pricingModel && (
-                        <p><span className="capitalize">{selectedTool.pricingModel}</span></p>
-                      )}
-                      {selectedTool.hasFreeTrialDays && <p className="text-xs">Free Trial: {selectedTool.hasFreeTrialDays} days</p>}
-                      {selectedTool.verdict && <p className="italic text-gray-700 text-xs mt-2 pt-2 border-t border-green-200">&ldquo;{selectedTool.verdict}&rdquo;</p>}
-                    </div>
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3 opacity-30">
+                    <Target className="w-4 h-4 text-gray-900" />
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-900">Analysis</h3>
                   </div>
-                )}
+                  <div className="text-lg text-gray-700 leading-relaxed font-medium prose prose-indigo max-w-none">
+                    <ReactMarkdown>{selectedTool.description}</ReactMarkdown>
+                  </div>
+                </div>
 
-                {/* Best For / Not Recommended */}
-                {(selectedTool.bestFor || selectedTool.notRecommendedFor) && (
-                  <div className="grid md:grid-cols-2 gap-3 mb-6">
-                    {selectedTool.bestFor && (
-                      <div className="p-3 rounded-xl bg-blue-50/40 border border-blue-100">
-                        <h4 className="text-xs font-semibold text-blue-800 mb-1 flex items-center gap-1"><Target className="w-3 h-3" /> Best For</h4>
-                        <p className="text-xs text-blue-900">{selectedTool.bestFor}</p>
-                      </div>
-                    )}
-                    {selectedTool.notRecommendedFor && (
-                      <div className="p-3 rounded-xl bg-gray-50 border border-gray-200">
-                        <h4 className="text-xs font-semibold text-gray-800 mb-1 flex items-center gap-1"><Shield className="w-3 h-3" /> Not For</h4>
-                        <p className="text-xs text-gray-700">{selectedTool.notRecommendedFor}</p>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Expertise */}
-                {(selectedTool.targetAudience || selectedTool.skillLevel || selectedTool.learningCurve) && (
-                  <div className="mb-6 p-3 rounded-xl" style={{ background: '#F0F0F3', boxShadow: neomorphShadow.pressed }}>
-                    <h4 className="text-sm font-semibold mb-2 flex items-center gap-2"><Users className="w-4 h-4" /> Who It's For</h4>
-                    <div className="space-y-2 text-xs">
-                      {selectedTool.targetAudience && selectedTool.targetAudience.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                          {selectedTool.targetAudience.map((aud, idx) => (
-                            <span key={idx} className="px-2 py-0.5 rounded bg-blue-100 text-blue-700">{aud}</span>
-                          ))}
-                        </div>
-                      )}
-                      <div className="flex gap-3">
-                        {selectedTool.skillLevel && <span className="px-2 py-0.5 rounded bg-green-100 text-green-700 capitalize">{selectedTool.skillLevel}</span>}
-                        {selectedTool.learningCurve && <span className="px-2 py-0.5 rounded bg-purple-100 text-purple-700 capitalize">{selectedTool.learningCurve} curve</span>}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Integrations */}
-                {selectedTool.integrations && selectedTool.integrations.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="text-sm font-semibold mb-2 flex items-center gap-2"><Code className="w-4 h-4" /> Integrations</h4>
-                    <div className="flex flex-wrap gap-1">
-                      {selectedTool.integrations.slice(0, 6).map((int, idx) => (
-                        <span key={idx} className="px-2 py-1 rounded-lg bg-white text-xs border">{int}</span>
-                      ))}
-                      {selectedTool.integrations.length > 6 && <span className="text-xs text-gray-500">+{selectedTool.integrations.length - 6} more</span>}
-                    </div>
-                    {selectedTool.apiAvailable && <p className="text-xs text-green-600 mt-1">✓ API Available</p>}
-                  </div>
-                )}
-
-                {/* Company Info */}
-                {(selectedTool.companyFounded || selectedTool.employeeCount || selectedTool.fundingRaised) && (
-                  <div className="mb-6 p-3 rounded-xl" style={{ background: '#F0F0F3', boxShadow: neomorphShadow.pressed }}>
-                    <h4 className="text-sm font-semibold mb-2 flex items-center gap-2"><Building2 className="w-4 h-4" /> Company</h4>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      {selectedTool.companyName && <div><span className="text-gray-600">Name:</span> <strong>{selectedTool.companyName}</strong></div>}
-                      {selectedTool.companyFounded && <div><span className="text-gray-600">Founded:</span> <strong>{selectedTool.companyFounded}</strong></div>}
-                      {selectedTool.employeeCount && <div><span className="text-gray-600">Team:</span> <strong>{selectedTool.employeeCount}</strong></div>}
-                      {selectedTool.fundingRaised && <div><span className="text-gray-600">Funding:</span> <strong>{selectedTool.fundingRaised}</strong></div>}
-                    </div>
-                  </div>
-                )}
-
-                {/* Trust Badges */}
-                {(selectedTool.gdprCompliant || selectedTool.hasPrivacyPolicy || (selectedTool.securityFeatures && selectedTool.securityFeatures.length > 0)) && (
-                  <div className="mb-6">
-                    <h4 className="text-sm font-semibold mb-2 flex items-center gap-2"><Shield className="w-4 h-4 text-green-600" /> Security</h4>
-                    <div className="flex flex-wrap gap-2 text-xs">
-                      {selectedTool.hasPrivacyPolicy && <span className="px-2 py-1 rounded bg-green-100 text-green-700">✓ Privacy Policy</span>}
-                      {selectedTool.gdprCompliant && <span className="px-2 py-1 rounded bg-green-100 text-green-700">✓ GDPR</span>}
-                      {selectedTool.securityFeatures?.slice(0, 3).map((feat, idx) => (
-                        <span key={idx} className="px-2 py-1 rounded bg-gray-100 text-gray-700">{feat}</span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Alternatives */}
-                {selectedTool.alternatives && selectedTool.alternatives.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="text-sm font-semibold mb-2 flex items-center gap-2"><Zap className="w-4 h-4" /> Alternatives</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedTool.alternatives.slice(0, 5).map((alt, idx) => (
-                        <span key={idx} className="px-2 py-1 rounded-lg text-xs" style={{ background: '#F0F0F3', boxShadow: neomorphShadow.raised }}>{alt}</span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Tags */}
-                {selectedTool.tags && selectedTool.tags.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="text-sm font-semibold mb-2">Tags</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedTool.tags.map((tag, idx) => (
-                        <span key={`tag-${selectedTool.id}-${idx}-${tag}`} className="text-xs px-2 py-1 rounded-lg" style={{ background: '#F0F0F3', boxShadow: neomorphShadow.pressed, color: '#6b7280' }}>
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Description with Markdown */}
-                {selectedTool.description && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3">About</h3>
-                    <div className="text-sm text-muted-foreground leading-relaxed prose prose-sm max-w-none">
-                      <ReactMarkdown
-                        components={{
-                          h1: ({ node, ...props }) => <h3 className="text-lg font-bold text-gray-900 mt-4 mb-2" {...props} />,
-                          h2: ({ node, ...props }) => <h4 className="text-base font-bold text-gray-800 mt-3 mb-2" {...props} />,
-                          h3: ({ node, ...props }) => <h5 className="text-sm font-bold text-gray-800 mt-2 mb-1" {...props} />,
-                          ul: ({ node, ...props }) => <ul className="list-disc list-inside space-y-1 mb-2" {...props} />,
-                          a: ({ node, ...props }) => <a className="text-blue-600 hover:underline" target="_blank" {...props} />,
-                        }}
-                      >
-                        {selectedTool.description}
-                      </ReactMarkdown>
-                    </div>
-                  </div>
-                )}
+                <div className="pt-8 border-t border-white/40 flex justify-between items-center text-[9px] font-black uppercase tracking-widest text-muted-foreground/30">
+                  <span>Bedwinning Pure Index</span>
+                </div>
               </div>
             </div>
+          ) : filteredTools.length === 0 ? (
+            <div className="rounded-3xl flex-1 flex flex-col items-center justify-center p-12 text-center space-y-6"
+              style={{ background: '#F0F0F3', boxShadow: neomorphShadow.raised }}>
+              <div className="w-24 h-24 rounded-3xl flex items-center justify-center text-indigo-400"
+                style={{ background: '#F0F0F3', boxShadow: neomorphShadow.pressed }}>
+                <Zap className="w-10 h-10 opacity-20" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-xl font-black text-gray-900 uppercase tracking-widest">No Tools Found</h3>
+                <p className="text-sm text-gray-500 font-medium max-w-xs">
+                  We couldn't find anything matching your search. Try adjusting your filters or search terms.
+                </p>
+              </div>
+              <button
+                onClick={() => router.push(pathname)}
+                className="px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all"
+                style={{ background: '#F0F0F3', boxShadow: neomorphShadow.raised, color: '#4f46e5' }}
+              >
+                Clear Everything
+              </button>
+            </div>
           ) : (
-            <div className="rounded-2xl p-8 h-full flex items-center justify-center" style={{ background: '#F0F0F3', boxShadow: neomorphShadow.raised }}>
-              <p className="text-muted-foreground">Select a tool to view details</p>
+            <div className="rounded-2xl p-8 h-full flex items-center justify-center opacity-40" style={{ background: '#F0F0F3', boxShadow: neomorphShadow.raised }}>
+              <p className="text-sm font-bold uppercase tracking-widest">Select a tool to explore</p>
             </div>
           )}
         </div>
