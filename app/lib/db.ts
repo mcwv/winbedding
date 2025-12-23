@@ -26,6 +26,8 @@ pool.on('connect', (client) => {
 
 export interface DbTool {
     id: number
+    price_model?: string
+    isFeatured?: boolean
     name: string
     slug: string
     description: string | null
@@ -35,6 +37,8 @@ export interface DbTool {
     updated_at: Date
     logo_url: string | null
     screenshot_url: string | null
+    previous_slugs: string[] | null
+    quality_score: number
 }
 
 export function dbToolToTool(dbTool: DbTool): Tool {
@@ -48,7 +52,8 @@ export function dbToolToTool(dbTool: DbTool): Tool {
         updatedAt: dbTool.updated_at.toISOString(),
         logoUrl: dbTool.logo_url || undefined,
         imageUrl: dbTool.screenshot_url || undefined,
-        source: 'database'
+        source: 'database',
+        quality_score: dbTool.quality_score || 0
     }
 }
 
@@ -56,6 +61,7 @@ export function dbToolToTool(dbTool: DbTool): Tool {
 export async function getAllTools() {
     const result = await pool.query<DbTool>(`
     SELECT * FROM published_tools 
+    ORDER BY quality_score DESC, updated_at DESC
     LIMIT 5000 
   `) // Restored limit for categories to work
     return result.rows.map(dbToolToTool)
@@ -64,7 +70,7 @@ export async function getAllTools() {
 // Get tools by category
 export async function getToolsByCategory(category: string) {
     const result = await pool.query<DbTool>(
-        'SELECT * FROM published_tools WHERE v2_category = $1 ORDER BY updated_at DESC',
+        'SELECT * FROM published_tools WHERE v2_category = $1 ORDER BY quality_score DESC, updated_at DESC',
         [category]
     )
     return result.rows.map(dbToolToTool)
@@ -93,23 +99,35 @@ export async function searchTools(query: string) {
     })
     const scoreSql = scoringParts.length > 0 ? scoringParts.join(' + ') : '1'
 
-    const result = await pool.query<DbTool>(
+    const result = await pool.query<DbTool & { relevance_score: number }>(
         `SELECT *, (${scoreSql}) as relevance_score FROM published_tools 
          WHERE ${conditions}
-         ORDER BY relevance_score DESC, updated_at DESC
+         ORDER BY relevance_score DESC, quality_score DESC, updated_at DESC
          LIMIT 500`,
         tokenGroups.map(group => group.map(w => `%${w}%`))
     )
     return result.rows.map(dbToolToTool)
 }
 
-// Get tool by slug
+// Get tool by slug with legacy fallback
 export async function getToolBySlug(slug: string) {
+    // 1. Try exact match
     const result = await pool.query<DbTool>(
         'SELECT * FROM published_tools WHERE slug = $1',
         [slug]
     )
-    return result.rows[0] ? dbToolToTool(result.rows[0]) : null
+
+    if (result.rows[0]) {
+        return dbToolToTool(result.rows[0])
+    }
+
+    // 2. Try legacy fallback
+    const fallbackResult = await pool.query<DbTool>(
+        'SELECT * FROM published_tools WHERE $1 = ANY(previous_slugs)',
+        [slug]
+    )
+
+    return fallbackResult.rows[0] ? dbToolToTool(fallbackResult.rows[0]) : null
 }
 
 // Get tool count
@@ -131,6 +149,15 @@ export async function getCategoriesWithCounts() {
         category: row.category,
         count: parseInt(row.count, 10)
     }))
+}
+
+// Get similar tools by category
+export async function getSimilarTools(toolId: string, category: string, limit: number = 4) {
+    const result = await pool.query<DbTool>(
+        'SELECT * FROM published_tools WHERE v2_category = $1 AND id != $2 ORDER BY quality_score DESC, updated_at DESC LIMIT $3',
+        [category, parseInt(toolId), limit]
+    )
+    return result.rows.map(dbToolToTool)
 }
 
 export { pool }

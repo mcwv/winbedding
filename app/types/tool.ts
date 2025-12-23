@@ -9,4 +9,5 @@ export interface Tool {
   logoUrl?: string
   imageUrl?: string
   source: 'database'
+  quality_score: number
 }

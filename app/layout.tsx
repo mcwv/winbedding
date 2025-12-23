@@ -1,6 +1,17 @@
 import type { Metadata } from "next"
 import Script from "next/script"
+import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+})
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+})
 
 // Metadata section
 export const metadata: Metadata = {
@@ -88,7 +99,7 @@ export default function RootLayout({
           )
         )}
       </head>
-      <body>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} style={{ fontFamily: 'var(--font-geist-sans), sans-serif' }}>
         {process.env.NEXT_PUBLIC_GTM_ID?.startsWith('GTM-') && (
           <noscript>
             <iframe

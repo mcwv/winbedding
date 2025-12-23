@@ -114,7 +114,12 @@ export function calculateRelevanceScore(tool: any, query: string): number {
         return groupMatched
     })
 
-    return allGroupsMatch ? totalScore : 0
+    const finalScore = allGroupsMatch ? totalScore : 0
+
+    // Quality Boost: Scores can be boosted by up to 100% based on data quality
+    const qualityBoost = 1 + (tool.quality_score / 100)
+
+    return finalScore * qualityBoost
 }
 
 /**

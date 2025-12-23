@@ -25,7 +25,7 @@ export default function AboutPage() {
                             <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">Our Mission</span>
                         </div>
                         <h1 className="text-4xl font-extrabold text-zinc-800 mb-6 tracking-tight">
-                            Strictly Vetted. <span className="text-indigo-600">Pure Utility.</span>
+                            Strictly Vetted. <span className="text-indigo-600">AI Utility.</span>
                         </h1>
                         <p className="text-xl text-zinc-500 leading-relaxed">
                             Bedwinning is more than a directory. We are a filter for the "AI Noise", helping you find the 1% of tools that actually move the needle for your business.

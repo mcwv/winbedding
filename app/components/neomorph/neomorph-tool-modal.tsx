@@ -67,24 +67,17 @@ export default function NeomorphToolModal({ tool, onClose }: NeomorphToolModalPr
                 style={{ background: '#F0F0F3', boxShadow: neomorphShadow.pressed }}
               >
                 <img
-                  src={tool.logoUrl || faviconUrl || ''}
+                  src={tool.logoUrl || faviconUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(tool.name)}&background=4f46e5&color=fff&bold=true&size=128`}
                   alt={tool.name}
                   className="w-full h-full object-contain"
-                  onError={(e) => {
-                    if (tool.logoUrl && (e.target as HTMLImageElement).src !== faviconUrl) {
-                      (e.target as HTMLImageElement).src = faviconUrl || ''
-                    } else {
-                      (e.target as HTMLImageElement).style.visibility = 'hidden'
-                    }
-                  }}
                 />
               </div>
 
               <div className="flex-1 text-center md:text-left space-y-4">
-                <p className="text-xs font-black uppercase tracking-[0.3em] text-indigo-600/60">
+                <p className="text-xs font-bold uppercase tracking-[0.3em] text-indigo-600/60">
                   {tool.category}
                 </p>
-                <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-none">
+                <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-none">
                   {tool.name}
                 </h2>
 
@@ -93,7 +86,7 @@ export default function NeomorphToolModal({ tool, onClose }: NeomorphToolModalPr
                     href={tool.visitURL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-8 py-3.5 rounded-2xl flex items-center gap-2 text-sm font-black transition-all active:scale-95"
+                    className="px-8 py-3.5 rounded-2xl flex items-center gap-2 text-sm font-bold transition-all active:scale-95"
                     style={{ background: '#F0F0F3', boxShadow: neomorphShadow.raised, color: '#4f46e5' }}
                   >
                     Open Website
@@ -110,7 +103,6 @@ export default function NeomorphToolModal({ tool, onClose }: NeomorphToolModalPr
                   src={tool.imageUrl}
                   alt={`${tool.name} Screenshot`}
                   className="w-full h-auto rounded-[1.5rem] shadow-sm"
-                  onError={(e) => (e.target as HTMLImageElement).parentElement?.remove()}
                 />
               </div>
             )}
@@ -119,14 +111,14 @@ export default function NeomorphToolModal({ tool, onClose }: NeomorphToolModalPr
             <div className="space-y-6">
               <div className="flex items-center gap-3 opacity-30">
                 <Target className="w-4 h-4 text-gray-900" />
-                <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-900">Capabilities & Analysis</h3>
+                <h3 className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-900">Capabilities & Analysis</h3>
               </div>
 
               <div className="text-lg md:text-xl text-gray-700 leading-relaxed font-medium prose prose-indigo max-w-none">
                 <ReactMarkdown
                   components={{
                     p: ({ node, ...props }) => <p className="mb-6 last:mb-0" {...props} />,
-                    strong: ({ node, ...props }) => <strong className="font-black text-gray-900" {...props} />,
+                    strong: ({ node, ...props }) => <strong className="font-bold text-gray-900" {...props} />,
                     ul: ({ node, ...props }) => <ul className="space-y-3 mb-6" {...props} />,
                     li: ({ node, ...props }) => (
                       <li className="flex gap-4 items-start">
@@ -142,8 +134,8 @@ export default function NeomorphToolModal({ tool, onClose }: NeomorphToolModalPr
             </div>
 
             {/* Footer / Last Updated */}
-            <div className="pt-8 border-t border-white/40 flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-muted-foreground/30">
-              <span>Source: Bedwinning Pure Index</span>
+            <div className="pt-8 border-t border-white/40 flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-muted-foreground/30">
+              <span>Source: Bedwinning AI Index</span>
               <span>Updated: {new Date(tool.updatedAt).toLocaleDateString()}</span>
             </div>
           </div>

@@ -2,8 +2,9 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ChevronLeft, Send, Sparkles, Target, Link as LinkIcon, Mail, Building2, MessageSquare } from "lucide-react"
+import { ChevronLeft, Send, Sparkles, Target, Link as LinkIcon, Mail, Building2, MessageSquare, Image as ImageIcon, Monitor, Video } from "lucide-react"
 import NeomorphNav from "../components/neomorph/neomorph-nav"
+import { submitToolAction } from "./actions"
 
 const neomorphShadow = {
     raised: `
@@ -19,14 +20,22 @@ const neomorphShadow = {
 export default function SubmitPage() {
     const [submitted, setSubmitted] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setLoading(true)
-        // Simulate submission
-        await new Promise(r => setTimeout(r, 1500))
+        setError(null)
+
+        const formData = new FormData(e.currentTarget)
+        const result = await submitToolAction(formData)
+
         setLoading(false)
-        setSubmitted(true)
+        if (result.success) {
+            setSubmitted(true)
+        } else {
+            setError(result.error || "Something went wrong")
+        }
     }
 
     if (submitted) {
@@ -72,10 +81,10 @@ export default function SubmitPage() {
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-2"
                         style={{ background: '#F0F0F3', boxShadow: 'inset 2px 2px 5px rgba(209,217,230,0.7), inset -2px -2px 5px rgba(255,255,255,0.7)' }}>
                         <Target className="w-4 h-4 text-indigo-600" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Quality Index</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Quality Index</span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight leading-none uppercase">
-                        Submit a <span className="text-indigo-600">Pure</span> Tool
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-none uppercase">
+                        Submit a <span className="text-indigo-600">New</span> Tool
                     </h1>
                     <p className="text-sm text-gray-500 font-bold max-w-md mx-auto leading-relaxed">
                         We only index tools that solve real problems. No hype, no fluff, just utility.
@@ -85,13 +94,14 @@ export default function SubmitPage() {
                 <form onSubmit={handleSubmit} className="space-y-8">
                     {/* Tool Name */}
                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 pl-2">Tool Name</label>
+                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 pl-2">Tool Name</label>
                         <div className="relative group">
                             <Building2 className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-indigo-500 transition-colors" />
                             <input
                                 required
                                 type="text"
                                 placeholder="e.g. Claude"
+                                name="name"
                                 className="w-full pl-14 pr-6 py-5 rounded-2xl bg-[#F0F0F3] text-sm outline-none transition-all placeholder:text-zinc-300 font-bold"
                                 style={{ boxShadow: neomorphShadow.pressed }}
                             />
@@ -107,6 +117,7 @@ export default function SubmitPage() {
                                 <input
                                     required
                                     type="url"
+                                    name="websiteUrl"
                                     placeholder="https://..."
                                     className="w-full pl-14 pr-6 py-5 rounded-2xl bg-[#F0F0F3] text-sm outline-none transition-all placeholder:text-zinc-300 font-bold"
                                     style={{ boxShadow: neomorphShadow.pressed }}
@@ -120,7 +131,54 @@ export default function SubmitPage() {
                                 <input
                                     required
                                     type="email"
+                                    name="contactEmail"
                                     placeholder="your@email.com"
+                                    className="w-full pl-14 pr-6 py-5 rounded-2xl bg-[#F0F0F3] text-sm outline-none transition-all placeholder:text-zinc-300 font-bold"
+                                    style={{ boxShadow: neomorphShadow.pressed }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Media URLs */}
+                    <div className="space-y-6">
+                        <div className="grid md:grid-cols-2 gap-8">
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 pl-2">Logo URL (Optional)</label>
+                                <div className="relative group">
+                                    <ImageIcon className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-indigo-500 transition-colors" />
+                                    <input
+                                        type="url"
+                                        name="logoUrl"
+                                        placeholder="https://.../logo.png"
+                                        className="w-full pl-14 pr-6 py-5 rounded-2xl bg-[#F0F0F3] text-sm outline-none transition-all placeholder:text-zinc-300 font-bold"
+                                        style={{ boxShadow: neomorphShadow.pressed }}
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 pl-2">Screenshot URL (Optional)</label>
+                                <div className="relative group">
+                                    <Monitor className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-indigo-500 transition-colors" />
+                                    <input
+                                        type="url"
+                                        name="screenshotUrl"
+                                        placeholder="https://.../app.png"
+                                        className="w-full pl-14 pr-6 py-5 rounded-2xl bg-[#F0F0F3] text-sm outline-none transition-all placeholder:text-zinc-300 font-bold"
+                                        style={{ boxShadow: neomorphShadow.pressed }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 pl-2">Video Demo URL (Optional)</label>
+                            <div className="relative group">
+                                <Video className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-indigo-500 transition-colors" />
+                                <input
+                                    type="url"
+                                    name="videoUrl"
+                                    placeholder="YouTube, Loom, or MP4 link"
                                     className="w-full pl-14 pr-6 py-5 rounded-2xl bg-[#F0F0F3] text-sm outline-none transition-all placeholder:text-zinc-300 font-bold"
                                     style={{ boxShadow: neomorphShadow.pressed }}
                                 />
@@ -136,12 +194,19 @@ export default function SubmitPage() {
                             <textarea
                                 required
                                 rows={6}
+                                name="description"
                                 placeholder="Explain what makes this tool exceptional..."
                                 className="w-full pl-14 pr-6 py-6 rounded-[2rem] bg-[#F0F0F3] text-sm outline-none transition-all placeholder:text-zinc-300 font-bold resize-none"
                                 style={{ boxShadow: neomorphShadow.pressed }}
                             />
                         </div>
                     </div>
+
+                    {error && (
+                        <div className="p-4 rounded-2xl bg-red-50 text-red-600 text-xs font-bold text-center animate-in fade-in duration-300">
+                            {error}
+                        </div>
+                    )}
 
                     <div className="pt-4">
                         <button
