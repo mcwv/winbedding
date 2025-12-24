@@ -89,6 +89,12 @@ export default function NeomorphToolBrowser({ tools, initialSelectedTool = null 
     setTimeout(() => setCopied(false), 2000)
   }
 
+  const handleCategoryClick = (category: string) => {
+    const params = new URLSearchParams()
+    if (category !== "all") params.set('c', category)
+    router.push(`${pathname}?${params.toString()}`)
+  }
+
   const handleTagClick = (tag: string) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set('q', tag)
@@ -192,7 +198,15 @@ export default function NeomorphToolBrowser({ tools, initialSelectedTool = null 
                       <h3 className="font-bold text-sm mb-0.5 line-clamp-1">
                         {tool.name}
                       </h3>
-                      <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">{tool.category}</p>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleCategoryClick(tool.category)
+                        }}
+                        className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider hover:text-indigo-400 transition-colors"
+                      >
+                        {tool.category}
+                      </button>
                     </div>
                   </div>
                 </button>
@@ -221,9 +235,12 @@ export default function NeomorphToolBrowser({ tools, initialSelectedTool = null 
                     />
                   </div>
                   <div className="flex-1 min-w-0 pb-1">
-                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600/60 mb-2">
+                    <button
+                      onClick={() => handleCategoryClick(selectedTool.category)}
+                      className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600/60 mb-2 hover:text-indigo-600 transition-colors"
+                    >
                       {selectedTool.category}
-                    </p>
+                    </button>
                     <h2 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-6">
                       {selectedTool.name}
                     </h2>
@@ -280,6 +297,21 @@ export default function NeomorphToolBrowser({ tools, initialSelectedTool = null 
                   <div className="text-lg text-gray-700 leading-relaxed font-medium prose prose-indigo max-w-none">
                     <ReactMarkdown>{selectedTool.description}</ReactMarkdown>
                   </div>
+
+                  {selectedTool.v2_tags && selectedTool.v2_tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 pt-6 border-t border-white/20">
+                      {selectedTool.v2_tags.map(tag => (
+                        <button
+                          key={tag}
+                          onClick={() => handleTagClick(tag)}
+                          className="px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider text-zinc-500 bg-[#F0F0F3] hover:text-indigo-600 transition-colors active:scale-95"
+                          style={{ boxShadow: neomorphShadow.pressed }}
+                        >
+                          #{tag}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="pt-8 border-t border-white/40 flex justify-between items-center text-[9px] font-bold uppercase tracking-widest text-muted-foreground/30">

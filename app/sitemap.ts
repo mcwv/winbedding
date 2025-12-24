@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { getAllTools } from './lib/db'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = 'https://bedwinning.com'
+    const baseUrl = 'https://www.bedwinning.com'
 
     // Fetch all tools from DB
     let tools: any[] = []

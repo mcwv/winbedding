@@ -1,0 +1,122 @@
+{
+  "total": 2842,
+  "url_status": {
+    "alive": 2581,
+    "404": 18,
+    "timeout": 10,
+    "missing": 0,
+    "error": 233
+  },
+  "morsels_status": {
+    "has_data": 609,
+    "no_data_found": 0,
+    "not_crawled": 2233,
+    "empty": 0
+  },
+  "metadata_status": {
+    "has_data": 2656,
+    "missing": 181,
+    "empty": 5
+  },
+  "adams_status": {
+    "has_description": 609,
+    "missing": 2233
+  },
+  "category_status": {
+    "assigned": 2737,
+    "other": 105,
+    "missing": 0
+  },
+  "flagged_tools": [
+    {
+      "name": "Runway Gen-4",
+      "reason": "404",
+      "url": "https://familypro.io/en/runway-gen4"
+    },
+    {
+      "name": "Amy by Crypto.com",
+      "reason": "404",
+      "url": "https://crypto.com/product-news/crypto-com-continues-ambitious-product-and-service-rollout-with-new-pioneering-innovation"
+    },
+    {
+      "name": "Abacus.AI",
+      "reason": "404",
+      "url": "https://abacus.ai/"
+    },
+    {
+      "name": "VoxDeck",
+      "reason": "404",
+      "url": "https://www.voxdeck.ai/?utm_source=dhvoxopentools"
+    },
+    {
+      "name": "Acrostic poem generator",
+      "reason": "404",
+      "url": "https://acrostic.ai/"
+    },
+    {
+      "name": "AiBud WP",
+      "reason": "404",
+      "url": "https://stylemixthemes.com/aibud-wp/"
+    },
+    {
+      "name": "Qoder",
+      "reason": "404",
+      "url": "https://qoder.com/"
+    },
+    {
+      "name": "Kaggle",
+      "reason": "404",
+      "url": "https://www.kaggle.com/"
+    },
+    {
+      "name": "Wolfram",
+      "reason": "404",
+      "url": "https://www.wolframalpha.com/"
+    },
+    {
+      "name": "AIWritingPal",
+      "reason": "404",
+      "url": "https://aiwritingpal.com"
+    },
+    {
+      "name": "MRPeasy",
+      "reason": "404",
+      "url": "https://try.mrpeasy.com/aitools-fyi"
+    },
+    {
+      "name": "Acrostic AI",
+      "reason": "404",
+      "url": "https://acrostic.ai"
+    },
+    {
+      "name": "BoomPop AI",
+      "reason": "404",
+      "url": "https://boompopinc.partnerlinks.io/aitools-fyi"
+    },
+    {
+      "name": "Wolfram|Alpha",
+      "reason": "404",
+      "url": "https://www.wolframalpha.com/"
+    },
+    {
+      "name": "Air",
+      "reason": "404",
+      "url": "https://www.air.ai/"
+    },
+    {
+      "name": "Letterdrop AI",
+      "reason": "404",
+      "url": "https://letterdrop.com/letterdrop-ai"
+    },
+    {
+      "name": "Loukoum AI",
+      "reason": "404",
+      "url": "https://loukoum.ai/"
+    },
+    {
+      "name": "Chadview",
+      "reason": "404",
+      "url": "https://chadview.framer.website/"
+    }
+  ]
+}

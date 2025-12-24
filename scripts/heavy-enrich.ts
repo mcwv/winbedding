@@ -8,145 +8,77 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 
-// --- CONFIG ---
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const BATCH_SIZE = 10;
-const BROWSER_TIMEOUT = 10000; // 10s timeout (Fail fast!)
-
-if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.error('❌ Missing Supabase keys in .env.local');
-  process.exit(1);
-}
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: { autoRefreshToken: false, persistSession: false },
-});
-
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 const turndownService = new TurndownService();
 
 async function main() {
-  console.log('🚀 Starting Heavy Enrichment (Double-Tap Safety Mode)...');
-
   const browser = await chromium.launch({ headless: true });
-  
-  const { count } = await supabase.from('tools').select('*', { count: 'exact', head: true });
-  const totalCount = count || 0;
-  console.log(`📊 Total Tools: ${totalCount}`);
+  console.log('🚀 Sniper Mode Engaged: Targeted Scraping starting...');
 
-  let currentOffset = 0;
-  let processedCount = 0;
-
-  while (currentOffset < totalCount) {
-    console.log(`\n📥 Fetching batch ${currentOffset} - ${currentOffset + BATCH_SIZE}...`);
-
-    const { data: tools } = await supabase
+  while (true) {
+    // 1. FETCH: Only get tools that are low quality
+    const { data: tools, error } = await supabase
       .from('tools')
       .select('*')
-      .range(currentOffset, currentOffset + BATCH_SIZE - 1);
+      .lt('quality_score', 40)
+      .order('updated_at', { ascending: true })
+      .limit(10);
 
-    if (!tools || tools.length === 0) break;
+    if (error || !tools || tools.length === 0) break;
 
-    const context = await browser.newContext({
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-    });
+    const context = await browser.newContext({ userAgent: 'Mozilla/5.0...' });
+    const page = await context.newPage();
 
     for (const tool of tools) {
-      
-      // 1. RESUME CHECK
-      // If ANY text exists (even "Attempting..."), we assume it's done or burned.
-      // @ts-ignore
-      const existingText = tool.tracking_metadata?.scraped_content?.clean_text;
-      if (existingText) {
-         process.stdout.write(`   ⏭️  Skipping ${tool.name.substring(0, 15)}... (Done/Burned)\r`);
-         processedCount++;
-         continue;
-      }
-
-      // 2. THE SAFETY LOCK (Write "Attempting" BEFORE crawling)
-      // This ensures if the script crashes/hangs here, the tool is "burned" for next time.
-      const pendingMetadata = {
-        ...tool.tracking_metadata,
-        scraped_content: {
-          ...tool.tracking_metadata?.scraped_content,
-          clean_text: "Attempting..." 
-        }
-      };
-      await supabase.from('tools').update({ tracking_metadata: pendingMetadata }).eq('id', tool.id);
-
-      const page = await context.newPage();
-      process.stdout.write(`   [${Math.round((processedCount/totalCount)*100)}%] Crawling: ${tool.name.substring(0, 20)}... `);
-
+      console.log(`🔎 Processing: ${tool.name}`);
       try {
-        await page.goto(tool.website_url, { waitUntil: 'domcontentloaded', timeout: BROWSER_TIMEOUT });
-        
-        const html = await page.content();
-        const doc = new JSDOM(html, { url: tool.website_url });
-        const document = doc.window.document;
+        // Mark as "Attempting" and bump timestamp
+        await supabase.from('tools').update({ 
+          updated_at: new Date().toISOString(),
+          tracking_metadata: { ...tool.tracking_metadata, scraped_content: { clean_text: "Attempting..." } }
+        }).eq('id', tool.id);
 
-        // GRAB IMAGES
-        const ogImage = document.querySelector('meta[property="og:image"]')?.getAttribute('content') || 
-                        document.querySelector('meta[name="twitter:image"]')?.getAttribute('content') || '';
+        await page.goto(tool.website_url, { waitUntil: 'load', timeout: 20000 }).catch(() => {});
+        await page.waitForTimeout(2000);
 
-        let logo = document.querySelector('link[rel="apple-touch-icon"]')?.getAttribute('href') || 
-                   document.querySelector('link[rel="icon"]')?.getAttribute('href') || '';
-        
-        if (logo && !logo.startsWith('http') && !logo.startsWith('data:')) {
-            try { logo = new URL(logo, tool.website_url).href; } catch (e) {}
-        }
+        // Bypasses the "__name is not defined" error by extracting raw first
+        const rawData = await page.evaluate(() => ({
+          title: document.title,
+          bodyText: document.body.innerText,
+          html: document.documentElement.innerHTML,
+        })).catch(() => null);
 
-        const reader = new Readability(document);
+        if (!rawData) throw new Error("Extraction failed");
+
+        // Use JSDOM locally so we don't crash the browser's JS scope
+        const dom = new JSDOM(rawData.html, { url: tool.website_url });
+        const reader = new Readability(dom.window.document);
         const article = reader.parse();
 
-        if (article) {
-          const markdown = turndownService.turndown(article.content);
-          
-          const scrapedContent = {
-            title: article.title,
-            description: article.excerpt, 
-            clean_text: markdown,
-            image_url: ogImage,
-            logo_url: logo,
-            crawled_at: new Date().toISOString().split('T')[0]
-          };
-
-          // 3. SUCCESS UPDATE (Overwrite "Attempting..." with real data)
-          const finalMetadata = {
-            ...tool.tracking_metadata,
-            scraped_content: { ...tool.tracking_metadata?.scraped_content, ...scrapedContent }
-          };
-
-          await supabase.from('tools').update({ tracking_metadata: finalMetadata }).eq('id', tool.id);
-          console.log(`✅ (${markdown.length} chars)`);
-        } else {
-          throw new Error("No readable content");
+        // FALLBACK LOGIC: If it's a "boring" math tool like Wolfram, grab the body text
+        let markdown = article?.content ? turndownService.turndown(article.content) : "";
+        if (markdown.length < 200) {
+          console.log(`   💡 Using Body Fallback for ${tool.name}`);
+          markdown = rawData.bodyText.substring(0, 5000); 
         }
 
-      } catch (e) {
-        console.log(`❌ (Failed)`);
-        
-        // 4. FAILURE UPDATE (Overwrite "Attempting..." with FAILED)
-        const failedMetadata = {
-          ...tool.tracking_metadata,
-          scraped_content: {
-            ...tool.tracking_metadata?.scraped_content,
-            clean_text: "CRAWL_FAILED",
-            crawled_at: new Date().toISOString().split('T')[0]
+        await supabase.from('tools').update({ 
+          tracking_metadata: { 
+            ...tool.tracking_metadata, 
+            scraped_content: { clean_text: markdown, crawled_at: new Date().toISOString() } 
           }
-        };
-        await supabase.from('tools').update({ tracking_metadata: failedMetadata }).eq('id', tool.id);
-      } finally {
-        await page.close();
-      }
-      processedCount++;
-    }
-    
-    await context.close();
-    currentOffset += BATCH_SIZE;
-  }
+        }).eq('id', tool.id);
 
+        console.log(`   ✅ Success`);
+      } catch (e: any) {
+        console.log(`   ❌ Failed: ${e.message}`);
+      }
+    }
+    await page.close();
+    await context.close();
+  }
   await browser.close();
-  console.log('\n🎉 DONE!');
+  console.log('🏁 All done. Go to sleep.');
 }
 
 main();

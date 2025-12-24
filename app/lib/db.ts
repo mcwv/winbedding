@@ -39,21 +39,37 @@ export interface DbTool {
     screenshot_url: string | null
     previous_slugs: string[] | null
     quality_score: number
+    tracking_metadata?: any
+    v2_tags?: string[]
 }
-
 export function dbToolToTool(dbTool: DbTool): Tool {
+    // Fallback logic for description and logo using tracking_metadata
+    let description = dbTool.description || ''
+    let logoUrl = dbTool.logo_url || undefined
+
+    if (!description && dbTool.tracking_metadata) {
+        const meta = dbTool.tracking_metadata.metadata || {}
+        description = meta['og:description'] || meta['twitter:description'] || ''
+    }
+
+    if (!logoUrl && dbTool.tracking_metadata) {
+        const meta = dbTool.tracking_metadata.metadata || {}
+        logoUrl = meta['og:image'] || meta['twitter:image'] || undefined
+    }
+
     return {
         id: dbTool.id.toString(),
         name: dbTool.name,
         slug: dbTool.slug,
-        description: dbTool.description || '',
+        description: description,
         visitURL: dbTool.website_url || '',
         category: dbTool.v2_category || 'Other',
         updatedAt: dbTool.updated_at.toISOString(),
-        logoUrl: dbTool.logo_url || undefined,
+        logoUrl: logoUrl,
         imageUrl: dbTool.screenshot_url || undefined,
         source: 'database',
-        quality_score: dbTool.quality_score || 0
+        quality_score: dbTool.quality_score || 0,
+        v2_tags: dbTool.v2_tags || []
     }
 }
 

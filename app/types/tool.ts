@@ -10,4 +10,5 @@ export interface Tool {
   imageUrl?: string
   source: 'database'
   quality_score: number
+  v2_tags?: string[]
 }

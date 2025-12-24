@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 // Metadata section
 export const metadata: Metadata = {
-  metadataBase: new URL('https://bedwinning.com'),
+  metadataBase: new URL('https://www.bedwinning.com'),
   title: {
     template: '%s | Bedwinning',
     default: 'Bedwinning | AI Tool Directory',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://bedwinning.com',
+    url: 'https://www.bedwinning.com',
     siteName: 'Bedwinning',
     images: [{
       url: '/favicon.png',
@@ -44,9 +44,6 @@ export const metadata: Metadata = {
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
-  },
-  alternates: {
-    canonical: 'https://bedwinning.com',
   },
 }
 

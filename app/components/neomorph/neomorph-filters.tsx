@@ -16,7 +16,18 @@ export default function NeomorphFilters() {
     const pathname = usePathname()
 
     const [search, setSearch] = useState(searchParams.get("q") || "")
-    const category = searchParams.get("c") || "all"
+    const inputRef = (useCallback((node: HTMLInputElement | null) => {
+        if (node !== null) {
+            const handleKeyDown = (e: KeyboardEvent) => {
+                if (e.key === "/" && document.activeElement?.tagName !== "INPUT" && document.activeElement?.tagName !== "TEXTAREA") {
+                    e.preventDefault()
+                    node.focus()
+                }
+            }
+            window.addEventListener("keydown", handleKeyDown)
+            return () => window.removeEventListener("keydown", handleKeyDown)
+        }
+    }, []))
 
     // Update state when URL changes
     useEffect(() => {
@@ -25,8 +36,12 @@ export default function NeomorphFilters() {
 
     const updateParams = useCallback((newSearch: string) => {
         const params = new URLSearchParams(searchParams.toString())
-        if (newSearch) params.set("q", newSearch)
-        else params.delete("q")
+        if (newSearch) {
+            params.set("q", newSearch)
+            params.delete("c") // Clear category when searching
+        } else {
+            params.delete("q")
+        }
 
         // Always redirect to home index when searching
         router.push(`/?${params.toString()}`)
@@ -56,8 +71,9 @@ export default function NeomorphFilters() {
         <form onSubmit={handleSearchSubmit} className="relative w-full group">
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-indigo-500 transition-colors" />
             <input
+                ref={inputRef as any}
                 type="text"
-                placeholder="Search the AI Index (~2,000 tools)..."
+                placeholder="Search the AI Index (~2,000 tools)... Press / to focus"
                 value={search}
                 onChange={handleSearchChange}
                 className="w-full pl-12 pr-12 py-4 rounded-xl bg-[#F0F0F3] text-sm outline-none transition-all duration-300 placeholder:text-zinc-400 font-medium"
@@ -82,17 +98,19 @@ export function NeomorphCategoryChips() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const pathname = usePathname()
+    const [isExpanded, setIsExpanded] = useState(false)
 
     const category = searchParams.get("c") || "all"
 
     const updateCategory = (newCategory: string) => {
-        const params = new URLSearchParams(searchParams.toString())
+        const params = new URLSearchParams() // Start fresh to clear search
         if (newCategory !== "all") params.set("c", newCategory)
-        else params.delete("c")
 
         // Always redirect to home index when filtering
         router.push(`/?${params.toString()}`)
     }
+
+    const visibleCategories = isExpanded ? MAIN_CATEGORIES : MAIN_CATEGORIES.slice(0, 8)
 
     return (
         <div className="flex flex-wrap items-center justify-start gap-3 w-full">
@@ -107,7 +125,7 @@ export function NeomorphCategoryChips() {
             >
                 All
             </button>
-            {MAIN_CATEGORIES.map(cat => (
+            {visibleCategories.map(cat => (
                 <button
                     key={cat}
                     onClick={() => updateCategory(cat)}
@@ -121,6 +139,30 @@ export function NeomorphCategoryChips() {
                     {cat}
                 </button>
             ))}
+            {!isExpanded && MAIN_CATEGORIES.length > 8 && (
+                <button
+                    onClick={() => setIsExpanded(true)}
+                    className="px-4 py-2 rounded-xl text-[10px] font-bold transition-all uppercase tracking-wider text-indigo-500/60 hover:text-indigo-600"
+                    style={{
+                        background: '#F0F0F3',
+                        boxShadow: neomorphShadow.raised,
+                    }}
+                >
+                    More +
+                </button>
+            )}
+            {isExpanded && (
+                <button
+                    onClick={() => setIsExpanded(false)}
+                    className="px-4 py-2 rounded-xl text-[10px] font-bold transition-all uppercase tracking-wider text-indigo-500/60 hover:text-indigo-600"
+                    style={{
+                        background: '#F0F0F3',
+                        boxShadow: neomorphShadow.raised,
+                    }}
+                >
+                    Less -
+                </button>
+            )}
         </div>
     )
 }

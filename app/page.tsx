@@ -27,6 +27,9 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
       description,
       images: ['/favicon.png'],
     },
+    alternates: {
+      canonical: 'https://www.bedwinning.com',
+    },
   }
 }
 

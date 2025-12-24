@@ -109,6 +109,19 @@ export default function NeomorphStandaloneTool({ tool }: NeomorphStandaloneToolP
                         <div className="text-xl text-gray-700 leading-relaxed font-medium prose prose-zinc max-w-none">
                             <ReactMarkdown>{tool.description}</ReactMarkdown>
                         </div>
+                        {tool.v2_tags && tool.v2_tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2 pt-6 border-t border-white/20">
+                                {tool.v2_tags.map(tag => (
+                                    <span
+                                        key={tag}
+                                        className="px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider text-zinc-500 bg-[#F0F0F3]"
+                                        style={{ boxShadow: neomorphShadow.pressed }}
+                                    >
+                                        #{tag}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     {/* Meta Sidebar if needed */}

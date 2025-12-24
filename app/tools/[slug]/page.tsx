@@ -32,6 +32,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             description,
             images: [tool.logoUrl || '/favicon.png'],
         },
+        alternates: {
+            canonical: `https://www.bedwinning.com/tools/${slug}`,
+        },
     }
 }
 
@@ -61,9 +64,29 @@ export default async function ToolDetailPage({ params }: PageProps) {
         redirect(`/tools/${selectedTool.slug}`)
     }
 
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: selectedTool.name,
+        description: selectedTool.description,
+        applicationCategory: selectedTool.category,
+        operatingSystem: 'Any',
+        offers: {
+            '@type': 'Offer',
+            price: '0',
+            priceCurrency: 'USD',
+        },
+        image: selectedTool.logoUrl || 'https://www.bedwinning.com/favicon.png',
+    }
+
     return (
         <div className="min-h-screen flex flex-col pb-20" style={{ background: '#F0F0F3' }}>
             <NeomorphHeader />
+
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
 
             <main className="flex-1 container mx-auto px-4 max-w-7xl">
                 <NeomorphStandaloneTool tool={selectedTool} />

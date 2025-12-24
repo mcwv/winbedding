@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: '/',
             disallow: '/private/',
         },
-        sitemap: 'https://bedwinning.com/sitemap.xml',
+        sitemap: 'https://www.bedwinning.com/sitemap.xml',
     }
 }

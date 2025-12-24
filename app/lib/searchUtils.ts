@@ -27,6 +27,9 @@ export const SYNONYM_MAP: Record<string, string[]> = {
     'analytics': ['data', 'metrics', 'insights'],
     'legal': ['lawyer', 'compliance', 'contract'],
     'medical': ['health', 'doctor', 'doctor assistant'],
+    'career': ['job', 'interview', 'resume', 'hiring', 'recruitment'],
+    'hiring': ['career', 'recruitment', 'job', 'interview'],
+    'interview': ['career', 'job', 'hiring'],
 }
 
 /**
@@ -101,6 +104,12 @@ export function calculateRelevanceScore(tool: any, query: string): number {
             // Category match (Weight 10)
             if (tool.category?.toLowerCase().includes(w)) {
                 totalScore += 10
+                groupMatched = true
+            }
+
+            // Tags match (Weight 15)
+            if (tool.v2_tags?.some((t: string) => t.toLowerCase().includes(w))) {
+                totalScore += 15
                 groupMatched = true
             }
 
