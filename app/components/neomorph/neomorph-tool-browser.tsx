@@ -159,8 +159,9 @@ export default function NeomorphToolBrowser({ tools, initialSelectedTool = null 
   return (
     <div className="flex flex-col h-full space-y-4 w-full">
       <div className="grid lg:grid-cols-5 gap-6 flex-1 overflow-hidden">
-        {/* Left: Tool List */}
-        <div className="lg:col-span-2 flex flex-col overflow-hidden space-y-4">
+        {/* Left: Tool List - hidden on mobile when a tool is selected */}
+        <div className={`lg:col-span-2 flex flex-col overflow-hidden space-y-4 ${selectedTool ? 'hidden lg:flex' : 'flex'}`}>
+
           <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 px-1">
             <span>{filteredTools.length} tools indexed</span>
             {(searchQuery || selectedCategory !== 'all') && (
@@ -198,25 +199,34 @@ export default function NeomorphToolBrowser({ tools, initialSelectedTool = null 
                       <h3 className="font-bold text-sm mb-0.5 line-clamp-1">
                         {tool.name}
                       </h3>
-                      <button
+                      <span
+                        role="button"
+                        tabIndex={0}
                         onClick={(e) => {
                           e.stopPropagation()
                           handleCategoryClick(tool.category)
                         }}
-                        className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider hover:text-indigo-400 transition-colors"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.stopPropagation()
+                            handleCategoryClick(tool.category)
+                          }
+                        }}
+                        className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider hover:text-indigo-400 transition-colors cursor-pointer"
                       >
                         {tool.category}
-                      </button>
+                      </span>
                     </div>
                   </div>
                 </button>
+
               ))}
             </div>
           </div>
         </div>
 
-        {/* Right: Detail View */}
-        <div className="lg:col-span-3 flex flex-col overflow-hidden space-y-4">
+        {/* Right: Detail View - hidden on mobile when no tool selected, full-screen on mobile when selected */}
+        <div className={`lg:col-span-3 flex flex-col overflow-hidden space-y-4 ${selectedTool ? 'block' : 'hidden lg:block'}`}>
           {selectedTool ? (
             <div
               className="rounded-2xl flex-1 overflow-y-auto relative"
@@ -225,7 +235,18 @@ export default function NeomorphToolBrowser({ tools, initialSelectedTool = null 
                 boxShadow: neomorphShadow.raised,
               }}
             >
-              <div className="p-8 md:p-10 space-y-10">
+              {/* Mobile Back Button */}
+              <button
+                onClick={() => setSelectedTool(null)}
+                className="lg:hidden absolute top-4 left-4 z-10 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all active:scale-95"
+                style={{ background: '#F0F0F3', boxShadow: neomorphShadow.raised, color: '#4f46e5' }}
+              >
+                <ChevronRight className="w-4 h-4 rotate-180" />
+                Back
+              </button>
+
+              <div className="p-8 md:p-10 pt-16 lg:pt-8 space-y-10">
+
                 <div className="flex items-end gap-8">
                   <div className="w-28 h-28 rounded-3xl flex items-center justify-center flex-shrink-0 p-6 bg-white" style={{ boxShadow: neomorphShadow.pressed }}>
                     <img
