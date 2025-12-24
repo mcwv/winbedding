@@ -107,48 +107,80 @@ async def run_audit(limit=None):
         "flagged_tools": []
     }
     
+async def audit_tool(session, tool, semaphore, results):
+    """Process a single tool audit."""
+    async with semaphore:
+        # URL check
+        url_status = await check_url(session, tool['website_url'])
+        if url_status == "alive":
+            results["url_status"]["alive"] += 1
+        elif url_status == "404":
+            results["url_status"]["404"] += 1
+            results["flagged_tools"].append({"id": tool["id"], "name": tool["name"], "reason": "404", "url": tool["website_url"]})
+        elif url_status == "timeout":
+            results["url_status"]["timeout"] += 1
+        elif url_status == "missing":
+            results["url_status"]["missing"] += 1
+        else:
+            results["url_status"]["error"] += 1
+        
+        # Morsels check
+        morsels_status = check_morsels(tool['reddit_morsels'])
+        results["morsels_status"][morsels_status] = results["morsels_status"].get(morsels_status, 0) + 1
+        
+        # Metadata check
+        meta_status = check_metadata(tool['tracking_metadata'])
+        results["metadata_status"][meta_status] = results["metadata_status"].get(meta_status, 0) + 1
+        
+        # Adams check
+        if tool['adams_description']:
+            results["adams_status"]["has_description"] += 1
+        else:
+            results["adams_status"]["missing"] += 1
+        
+        # Category check
+        cat = tool['v2_category']
+        if not cat:
+            results["category_status"]["missing"] += 1
+        elif cat == "Other":
+            results["category_status"]["other"] += 1
+        else:
+            results["category_status"]["assigned"] += 1
+
+async def run_audit(limit=None):
+    print("=" * 50)
+    print("PRE-V3 AUDIT SCRIPT (Optimized)")
+    print(f"Started: {datetime.now().isoformat()}")
+    print("=" * 50)
+    
+    tools = fetch_all_tools()
+    if limit:
+        tools = tools[:limit]
+    
+    print(f"Auditing {len(tools)} tools...\n")
+    
+    results = {
+        "total": len(tools),
+        "url_status": {"alive": 0, "404": 0, "timeout": 0, "missing": 0, "error": 0},
+        "morsels_status": {"has_data": 0, "no_data_found": 0, "not_crawled": 0, "empty": 0},
+        "metadata_status": {"has_data": 0, "missing": 0, "empty": 0},
+        "adams_status": {"has_description": 0, "missing": 0},
+        "category_status": {"assigned": 0, "other": 0, "missing": 0},
+        "flagged_tools": []
+    }
+    
+    semaphore = asyncio.Semaphore(20)  # Limit concurrency to 20
     async with aiohttp.ClientSession() as session:
-        for i, tool in enumerate(tools):
-            # URL check
-            url_status = await check_url(session, tool['website_url'])
-            if url_status == "alive":
-                results["url_status"]["alive"] += 1
-            elif url_status == "404":
-                results["url_status"]["404"] += 1
-                results["flagged_tools"].append({"name": tool["name"], "reason": "404", "url": tool["website_url"]})
-            elif url_status == "timeout":
-                results["url_status"]["timeout"] += 1
-            elif url_status == "missing":
-                results["url_status"]["missing"] += 1
-            else:
-                results["url_status"]["error"] += 1
-            
-            # Morsels check
-            morsels_status = check_morsels(tool['reddit_morsels'])
-            results["morsels_status"][morsels_status] = results["morsels_status"].get(morsels_status, 0) + 1
-            
-            # Metadata check
-            meta_status = check_metadata(tool['tracking_metadata'])
-            results["metadata_status"][meta_status] = results["metadata_status"].get(meta_status, 0) + 1
-            
-            # Adams check
-            if tool['adams_description']:
-                results["adams_status"]["has_description"] += 1
-            else:
-                results["adams_status"]["missing"] += 1
-            
-            # Category check
-            cat = tool['v2_category']
-            if not cat:
-                results["category_status"]["missing"] += 1
-            elif cat == "Other":
-                results["category_status"]["other"] += 1
-            else:
-                results["category_status"]["assigned"] += 1
-            
-            # Progress
-            if (i + 1) % 50 == 0:
-                print(f"  Checked {i + 1}/{len(tools)} tools...")
+        tasks = []
+        for tool in tools:
+            tasks.append(audit_tool(session, tool, semaphore, results))
+        
+        # Process in batches to show progress
+        batch_size = 100
+        for i in range(0, len(tasks), batch_size):
+            batch = tasks[i : i + batch_size]
+            await asyncio.gather(*batch)
+            print(f"  Processed {min(i + batch_size, len(tasks))}/{len(tasks)} tools...")
     
     # Summary
     print("\n" + "=" * 50)
@@ -186,6 +218,6 @@ async def run_audit(limit=None):
     return results
 
 if __name__ == "__main__":
-    # Run on all tools, or set limit for testing
-    asyncio.run(run_audit(limit=10))  # Test with 10 first
+    # Run on all tools
+    asyncio.run(run_audit())
 
