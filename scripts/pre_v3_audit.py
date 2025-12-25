@@ -45,11 +45,22 @@ def fetch_all_tools():
         conn.close()
 
 async def check_url(session, url, timeout=10):
-    """Check if a URL is alive with a HEAD request."""
+    """Check if a URL is alive with a HEAD request, falling back to GET if needed."""
     if not url:
         return "missing"
+    
+    # Try HEAD first
     try:
         async with session.head(url, timeout=aiohttp.ClientTimeout(total=timeout), allow_redirects=True) as resp:
+            if resp.status < 400:
+                return "alive"
+            # If HEAD fails, fall through to GET
+    except Exception:
+        pass
+
+    # Fallback to GET
+    try:
+        async with session.get(url, timeout=aiohttp.ClientTimeout(total=timeout), allow_redirects=True) as resp:
             if resp.status < 400:
                 return "alive"
             elif resp.status == 404:

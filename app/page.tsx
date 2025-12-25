@@ -1,10 +1,12 @@
 import { Metadata } from 'next'
 import { Suspense } from 'react'
-import NeomorphHeader from "@/app/components/neomorph/neomorph-header"
-import NeomorphToolBrowser from "@/app/components/neomorph/neomorph-tool-browser"
+import Header from "@/app/components/ui/header"
+import ToolBrowser from "@/app/components/ui/tool-browser"
 import { getAllTools } from "@/app/lib/db"
 
-export const dynamic = 'force-dynamic'
+// ISR: Revalidate every 60 seconds (cached, regenerated in background)
+export const revalidate = 60
+
 
 export async function generateMetadata({ searchParams }: { searchParams: Promise<{ q?: string; c?: string }> }): Promise<Metadata> {
   const { q, c } = await searchParams
@@ -39,15 +41,15 @@ function ToolBrowserSkeleton() {
   return (
     <div className="grid lg:grid-cols-5 gap-6 h-full animate-pulse">
       <div className="lg:col-span-2 space-y-4">
-        <div className="h-4 bg-gray-200 rounded w-24"></div>
-        <div className="rounded-2xl p-4 space-y-3" style={{ background: '#F0F0F3', boxShadow: 'inset 4px 4px 8px rgba(209, 217, 230, 0.7), inset -4px -4px 8px rgba(255, 255, 255, 0.7)' }}>
+        <div className="h-4 bg-neutral-200 rounded w-24"></div>
+        <div className="rounded-2xl p-4 space-y-3 bg-neutral-100 border border-neutral-200 shadow-inner">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-20 bg-gray-200 rounded-lg"></div>
+            <div key={i} className="h-20 bg-neutral-200 rounded-lg"></div>
           ))}
         </div>
       </div>
       <div className="lg:col-span-3">
-        <div className="rounded-2xl h-full bg-gray-200"></div>
+        <div className="rounded-2xl h-full bg-neutral-200"></div>
       </div>
     </div>
   )
@@ -56,7 +58,7 @@ function ToolBrowserSkeleton() {
 // Async component to fetch and render tools
 async function ToolBrowserWithData() {
   const tools = await getAllTools()
-  return <NeomorphToolBrowser tools={tools} />
+  return <ToolBrowser tools={tools} />
 }
 
 export default async function HomePage({ searchParams }: { searchParams: Promise<{ q?: string; c?: string }> }) {
@@ -64,8 +66,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   await searchParams
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden" style={{ background: '#F0F0F3' }}>
-      <NeomorphHeader />
+    <div className="h-screen flex flex-col overflow-hidden bg-background">
+      <Header />
 
       {/* Tool Browser - fills remaining space */}
       <div className="flex-1 overflow-hidden pb-4">

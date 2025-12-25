@@ -1,16 +1,16 @@
 {
   "total": 2842,
   "url_status": {
-    "alive": 2579,
-    "404": 18,
-    "timeout": 12,
+    "alive": 2656,
+    "404": 7,
+    "timeout": 7,
     "missing": 0,
-    "error": 233
+    "error": 172
   },
   "morsels_status": {
-    "has_data": 679,
-    "no_data_found": 54,
-    "not_crawled": 2109,
+    "has_data": 924,
+    "no_data_found": 60,
+    "not_crawled": 1858,
     "empty": 0
   },
   "metadata_status": {
@@ -19,8 +19,8 @@
     "empty": 5
   },
   "adams_status": {
-    "has_description": 732,
-    "missing": 2110
+    "has_description": 984,
+    "missing": 1858
   },
   "category_status": {
     "assigned": 2737,
@@ -29,28 +29,10 @@
   },
   "flagged_tools": [
     {
-      "id": 2897,
-      "name": "VoxDeck",
+      "id": 4636,
+      "name": "Acrostic poem generator",
       "reason": "404",
-      "url": "https://www.voxdeck.ai/?utm_source=dhvoxopentools"
-    },
-    {
-      "id": 2364,
-      "name": "Runway Gen-4",
-      "reason": "404",
-      "url": "https://familypro.io/en/runway-gen4"
-    },
-    {
-      "id": 4604,
-      "name": "Amy by Crypto.com",
-      "reason": "404",
-      "url": "https://crypto.com/product-news/crypto-com-continues-ambitious-product-and-service-rollout-with-new-pioneering-innovation"
-    },
-    {
-      "id": 4543,
-      "name": "Abacus.AI",
-      "reason": "404",
-      "url": "https://abacus.ai/"
+      "url": "https://acrostic.ai/"
     },
     {
       "id": 5410,
@@ -59,52 +41,10 @@
       "url": "https://stylemixthemes.com/aibud-wp/"
     },
     {
-      "id": 4636,
-      "name": "Acrostic poem generator",
+      "id": 2857,
+      "name": "Video My Listing",
       "reason": "404",
-      "url": "https://acrostic.ai/"
-    },
-    {
-      "id": 4831,
-      "name": "Wolfram",
-      "reason": "404",
-      "url": "https://www.wolframalpha.com/"
-    },
-    {
-      "id": 2218,
-      "name": "Qoder",
-      "reason": "404",
-      "url": "https://qoder.com/"
-    },
-    {
-      "id": 5119,
-      "name": "Kaggle",
-      "reason": "404",
-      "url": "https://www.kaggle.com/"
-    },
-    {
-      "id": 3316,
-      "name": "Wolfram|Alpha",
-      "reason": "404",
-      "url": "https://www.wolframalpha.com/"
-    },
-    {
-      "id": 4412,
-      "name": "Air",
-      "reason": "404",
-      "url": "https://www.air.ai/"
-    },
-    {
-      "id": 256,
-      "name": "AIWritingPal",
-      "reason": "404",
-      "url": "https://aiwritingpal.com"
-    },
-    {
-      "id": 1887,
-      "name": "MRPeasy",
-      "reason": "404",
-      "url": "https://try.mrpeasy.com/aitools-fyi"
+      "url": "https://www.videomylisting.com/"
     },
     {
       "id": 4547,
@@ -113,22 +53,16 @@
       "url": "https://acrostic.ai"
     },
     {
-      "id": 302,
-      "name": "BoomPop AI",
+      "id": 4412,
+      "name": "Air",
       "reason": "404",
-      "url": "https://boompopinc.partnerlinks.io/aitools-fyi"
+      "url": "https://www.air.ai/"
     },
     {
       "id": 5513,
       "name": "Letterdrop AI",
       "reason": "404",
       "url": "https://letterdrop.com/letterdrop-ai"
-    },
-    {
-      "id": 1744,
-      "name": "Loukoum AI",
-      "reason": "404",
-      "url": "https://loukoum.ai/"
     },
     {
       "id": 743,

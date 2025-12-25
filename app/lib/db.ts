@@ -26,36 +26,55 @@ pool.on('connect', (client) => {
 
 export interface DbTool {
     id: number
-    price_model?: string
-    isFeatured?: boolean
     name: string
     slug: string
+    tagline?: string
     description: string | null
     website_url: string | null
+    logo_url: string | null
+    screenshot_url: string | null
     v2_category: string | null
     is_published: boolean
     updated_at: Date
-    logo_url: string | null
-    screenshot_url: string | null
-    previous_slugs: string[] | null
     quality_score: number
-    tracking_metadata?: any
     v2_tags?: string[]
+
+    // V3 Fields
+    pricing_model?: 'free' | 'freemium' | 'paid' | 'contact' | 'open-source'
+    price_amount?: number
+    price_currency?: string
+    has_free_tier?: boolean
+    has_trial?: boolean
+    trial_days?: number
+    tags?: string[]
+    use_cases?: string[]
+    features?: string[]
+    target_audience?: string[]
+    operating_system?: string[]
+    platforms?: string[]
+    skill_level?: string
+    learning_curve?: string
+    documentation_quality?: string
+    support_options?: string[]
+    api_available?: boolean
+    integrations?: string[]
+    alternatives?: string[]
+    pros?: string[]
+    cons?: string[]
+    best_for?: string
+    not_recommended_for?: string
+    verdict?: string
+    transparency_score?: number
+    experience_score?: number
+    adams_description?: string
+    reddit_morsels?: any[]
+    related_tools?: string[]
 }
+
 export function dbToolToTool(dbTool: DbTool): Tool {
-    // Fallback logic for description and logo using tracking_metadata
-    let description = dbTool.description || ''
-    let logoUrl = dbTool.logo_url || undefined
-
-    if (!description && dbTool.tracking_metadata) {
-        const meta = dbTool.tracking_metadata.metadata || {}
-        description = meta['og:description'] || meta['twitter:description'] || ''
-    }
-
-    if (!logoUrl && dbTool.tracking_metadata) {
-        const meta = dbTool.tracking_metadata.metadata || {}
-        logoUrl = meta['og:image'] || meta['twitter:image'] || undefined
-    }
+    // V3 enrichment ensures description and logo_url are populated
+    const description = dbTool.description || ''
+    const logoUrl = dbTool.logo_url || undefined
 
     return {
         id: dbTool.id.toString(),
@@ -69,7 +88,40 @@ export function dbToolToTool(dbTool: DbTool): Tool {
         imageUrl: dbTool.screenshot_url || undefined,
         source: 'database',
         quality_score: dbTool.quality_score || 0,
-        v2_tags: dbTool.v2_tags || []
+        v2_tags: dbTool.v2_tags || [],
+
+        // V3 Fields
+        tagline: dbTool.tagline,
+        pricing_model: dbTool.pricing_model,
+        price_amount: dbTool.price_amount,
+        price_currency: dbTool.price_currency,
+        has_free_tier: dbTool.has_free_tier,
+        has_trial: dbTool.has_trial,
+        trial_days: dbTool.trial_days,
+        tags: dbTool.tags,
+        use_cases: dbTool.use_cases,
+        features: dbTool.features,
+        target_audience: dbTool.target_audience,
+        operating_system: dbTool.operating_system,
+        platforms: dbTool.platforms,
+        skill_level: dbTool.skill_level as any,
+        learning_curve: dbTool.learning_curve as any,
+        documentation_quality: dbTool.documentation_quality as any,
+        support_options: dbTool.support_options,
+        api_available: dbTool.api_available,
+        integrations: dbTool.integrations,
+        alternatives: dbTool.alternatives,
+        pros: dbTool.pros,
+        cons: dbTool.cons,
+        best_for: dbTool.best_for,
+        not_recommended_for: dbTool.not_recommended_for,
+        verdict: dbTool.verdict,
+        transparency_score: dbTool.transparency_score,
+        experience_score: dbTool.experience_score,
+
+        adams_description: dbTool.adams_description, // Map directly
+        reddit_morsels: dbTool.reddit_morsels,       // Map directly
+        related_tools: dbTool.related_tools
     }
 }
 

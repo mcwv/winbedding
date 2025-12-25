@@ -1,11 +1,13 @@
 import { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
-import NeomorphHeader from "@/app/components/neomorph/neomorph-header"
-import NeomorphToolBrowser from "@/app/components/neomorph/neomorph-tool-browser"
+import Header from "@/app/components/ui/header"
+import ToolBrowser from "@/app/components/ui/tool-browser"
 import { getAllTools, getToolBySlug, getSimilarTools } from "@/app/lib/db"
-import NeomorphSimilarTools from "@/app/components/neomorph/neomorph-similar-tools"
+import SimilarTools from "@/app/components/ui/similar-tools"
 
-export const dynamic = 'force-dynamic'
+// ISR: Revalidate every 60 seconds (cached, regenerated in background)
+export const revalidate = 60
+
 
 interface PageProps {
     params: Promise<{ slug: string }>
@@ -38,7 +40,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
 }
 
-import NeomorphStandaloneTool from "@/app/components/neomorph/neomorph-standalone-tool"
+import ToolDetail from "@/app/components/ui/tool-detail"
 
 export default async function ToolDetailPage({ params }: PageProps) {
     const { slug } = await params
@@ -80,8 +82,8 @@ export default async function ToolDetailPage({ params }: PageProps) {
     }
 
     return (
-        <div className="min-h-screen flex flex-col pb-20" style={{ background: '#F0F0F3' }}>
-            <NeomorphHeader />
+        <div className="min-h-screen flex flex-col pb-20 bg-background">
+            <Header />
 
             <script
                 type="application/ld+json"
@@ -89,8 +91,8 @@ export default async function ToolDetailPage({ params }: PageProps) {
             />
 
             <main className="flex-1 container mx-auto px-4 max-w-7xl">
-                <NeomorphStandaloneTool tool={selectedTool} />
-                <NeomorphSimilarTools tools={similarTools} />
+                <ToolDetail tool={selectedTool} />
+                <SimilarTools tools={similarTools} />
             </main>
         </div>
     )

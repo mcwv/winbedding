@@ -1,41 +1,491 @@
 @import "tailwindcss";
 
 :root {
-  --background: oklch(0.985 0.002 100);
+  /* Light mode */
+  --background: oklch(0.96 0.01 260);
+  /* Using bg-room value */
   --foreground: oklch(0.145 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --border: oklch(0.922 0 0);
+
+  --surface: oklch(1 0 0);
+  --surface-elevated: oklch(0.985 0 0);
+
+  /* Base room */
+  --bg-room: oklch(0.96 0.01 260);
+
+  /* Surfaces */
+  --card-weak: oklch(0.99 0.005 260);
+  /* list items, subtle */
+  --card-mid: oklch(0.985 0.008 260);
+  /* main cards */
+  --card-strong: oklch(0.965 0.012 260);
+  /* side panels, featured */
+  --popover: oklch(1 0 0);
+  /* floating UI */
+
+  --text-primary: oklch(0.145 0 0);
+  --text-secondary: oklch(0.45 0 0);
+  --text-muted: oklch(0.556 0 0);
+
+  /* Typography roles */
+  --type-display-size: 3.25rem;
+  --type-display-line: 4rem;
+  --type-display-weight: 300;
+  --type-display-track: -0.02em;
+
+  --type-title-size: 2rem;
+  --type-title-line: 2.5rem;
+  --type-title-weight: 500;
+  --type-title-track: -0.01em;
+
+  --type-subtitle-size: 1.25rem;
+  --type-subtitle-line: 1.75rem;
+  --type-subtitle-weight: 500;
+  --type-subtitle-track: -0.005em;
+
+  --type-body-size: 1rem;
+  --type-body-line: 1.5rem;
+  --type-body-weight: 400;
+  --type-body-track: 0;
+
+  --type-ui-size: .875rem;
+  --type-ui-line: 1.25rem;
+  --type-ui-weight: 500;
+  --type-ui-track: 0.01em;
+
+  --type-caption-size: .75rem;
+  --type-caption-line: 1rem;
+  --type-caption-weight: 400;
+  --type-caption-track: 0.02em;
+
+  --type-mono-size: .875rem;
+  --type-mono-line: 1.25rem;
+  --type-mono-weight: 500;
+  --type-mono-track: 0;
+
+  /* New Typography from tailwind.config.ts - Keeping variables for reference but hardcoding below */
+  --type-tool-name-size: 2.625rem;
+  --type-tool-name-line: 1.2;
+  --type-tool-name-weight: 700;
+  --type-tool-name-track: -0.01em;
+
+  --type-heading-size: 1.5rem;
+  --type-heading-line: 1.3;
+  --type-heading-weight: 600;
+  --type-heading-track: -0.01em;
+
+  --type-eyebrow-size: 0.75rem;
+  --type-eyebrow-line: 1.5;
+  --type-eyebrow-weight: 600;
+  --type-eyebrow-track: 0.1em;
+
+  --type-label-size: 0.75rem;
+  --type-label-line: 1.5;
+  --type-label-weight: 600;
+  --type-label-track: 0.05em;
+
+  --type-form-label-size: 0.6875rem;
+  --type-form-label-line: 1.5;
+  --type-form-label-weight: 600;
+  --type-form-label-track: 0.1em;
+
+  --type-tiny-size: 0.75rem;
+  --type-tiny-line: 1.5;
+  --type-tiny-weight: 400;
+  --type-tiny-track: 0;
+
+  --type-body-sm-size: 0.875rem;
+  --type-body-sm-line: 1.6;
+  --type-body-sm-weight: 400;
+  --type-body-sm-track: 0;
+
+  --type-tagline-size: 1.125rem;
+  --type-tagline-line: 1.6;
+  --type-tagline-weight: 400;
+  --type-tagline-track: 0;
+
+  --type-quote-size: 1.125rem;
+  --type-quote-line: 1.7;
+  --type-quote-weight: 300;
+  --type-quote-track: 0;
+
+
+  /* Neutral grays 50-900 */
+  --neutral-50: oklch(0.985 0 0);
+  /* #fafafa */
+  --neutral-100: oklch(0.97 0 0);
+  /* #f5f5f5 */
+  --neutral-200: oklch(0.91 0 0);
+  /* #e5e5e5 */
+  --neutral-300: oklch(0.84 0 0);
+  /* #d4d4d4 */
+  --neutral-400: oklch(0.66 0 0);
+  /* #a3a3a3 */
+  --neutral-500: oklch(0.50 0 0);
+  /* #737373 */
+  --neutral-600: oklch(0.38 0 0);
+  /* #525252 */
+  --neutral-700: oklch(0.30 0 0);
+  /* #404040 */
+  --neutral-800: oklch(0.20 0 0);
+  /* #262626 */
+  --neutral-900: oklch(0.14 0 0);
+  /* #171717 */
+
+  --brand: oklch(0.55 0.24 280);
+  --brand-hover: oklch(0.48 0.26 280);
+  --brand-subtle: oklch(0.93 0.04 280);
+
+  --interactive: oklch(0.55 0.24 280);
+  --interactive-hover: oklch(0.48 0.26 280);
+
+  --border: oklch(0.88 0 0);
+  --border-strong: oklch(0.75 0 0);
+
+  --success: oklch(0.55 0.14 145);
+  --success-subtle: oklch(0.92 0.04 145);
+
+  --warning: oklch(0.75 0.18 85);
+  --warning-subtle: oklch(0.95 0.04 85);
+
+  --destructive: oklch(0.577 0.245 27);
+  --destructive-subtle: oklch(0.95 0.06 27);
+
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+}
+
+.dark {
+  /* Dark mode */
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+
+  --surface: oklch(0.18 0 0);
+  --surface-elevated: oklch(0.22 0 0);
+
+  --card-weak: oklch(0.20 0 0);
+  /* Keeping dark mappings for now but renaming */
+  --card-mid: oklch(0.18 0 0);
+  --card-strong: oklch(0.16 0 0);
+  --popover: oklch(0.22 0 0);
+
+  --text-primary: oklch(0.985 0 0);
+  --text-secondary: oklch(0.75 0 0);
+  --text-muted: oklch(0.556 0 0);
+
+  /* Neutral grays inverted for dark mode */
+  --neutral-50: oklch(0.14 0 0);
+  --neutral-100: oklch(0.18 0 0);
+  --neutral-200: oklch(0.24 0 0);
+  --neutral-300: oklch(0.32 0 0);
+  --neutral-400: oklch(0.50 0 0);
+  --neutral-500: oklch(0.60 0 0);
+  --neutral-600: oklch(0.72 0 0);
+  --neutral-700: oklch(0.82 0 0);
+  --neutral-800: oklch(0.90 0 0);
+  --neutral-900: oklch(0.97 0 0);
+
+  --brand: oklch(0.65 0.26 280);
+  --brand-hover: oklch(0.72 0.28 280);
+  --brand-subtle: oklch(0.25 0.08 280);
+
+  --interactive: oklch(0.65 0.26 280);
+  --interactive-hover: oklch(0.72 0.28 280);
+
+  --border: oklch(0.269 0 0);
+  --border-strong: oklch(0.439 0 0);
+
+  --success: oklch(0.65 0.16 145);
+  --success-subtle: oklch(0.25 0.06 145);
+
+  --warning: oklch(0.75 0.18 85);
+  --warning-subtle: oklch(0.25 0.06 85);
+
+  --destructive: oklch(0.637 0.237 25);
+  --destructive-subtle: oklch(0.25 0.08 27);
+
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-muted-foreground: var(--muted-foreground);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+
+  --color-card-weak: var(--card-weak);
+  --color-card-mid: var(--card-mid);
+  --color-card-strong: var(--card-strong);
+  --color-popover: var(--popover);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --type-display: var(--type-display-size) / var(--type-display-line);
+  --type-title: var(--type-title-size) / var(--type-title-line);
+  --type-subtitle: var(--type-subtitle-size) / var(--type-subtitle-line);
+  --type-body: var(--type-body-size) / var(--type-body-line);
+  --type-ui: var(--type-ui-size) / var(--type-ui-line);
+  --type-caption: var(--type-caption-size) / var(--type-caption-line);
+  --type-mono: var(--type-mono-size) / var(--type-mono-line);
+
+  --type-tool-name: var(--type-tool-name-size) / var(--type-tool-name-line);
+  --type-heading: var(--type-heading-size) / var(--type-heading-line);
+  --type-eyebrow: var(--type-eyebrow-size) / var(--type-eyebrow-line);
+  --type-label: var(--type-label-size) / var(--type-label-line);
+  --type-form-label: var(--type-form-label-size) / var(--type-form-label-line);
+  --type-tiny: var(--type-tiny-size) / var(--type-tiny-line);
+  --type-body-sm: var(--type-body-sm-size) / var(--type-body-sm-line);
+  --type-tagline: var(--type-tagline-size) / var(--type-tagline-line);
+  --type-quote: var(--type-quote-size) / var(--type-quote-line);
+
+
+  --color-neutral-50: var(--neutral-50);
+  --color-neutral-100: var(--neutral-100);
+  --color-neutral-200: var(--neutral-200);
+  --color-neutral-300: var(--neutral-300);
+  --color-neutral-400: var(--neutral-400);
+  --color-neutral-500: var(--neutral-500);
+  --color-neutral-600: var(--neutral-600);
+  --color-neutral-700: var(--neutral-700);
+  --color-neutral-800: var(--neutral-800);
+  --color-neutral-900: var(--neutral-900);
+
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-subtle: var(--brand-subtle);
+  --color-interactive: var(--interactive);
+  --color-interactive-hover: var(--interactive-hover);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-success: var(--success);
+  --color-success-subtle: var(--success-subtle);
+  --color-warning: var(--warning);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-destructive: var(--destructive);
+  --color-destructive-subtle: var(--destructive-subtle);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-text-primary font-sans antialiased;
+  }
+
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  *::-webkit-scrollbar {
+    display: none;
+  }
+
+  button,
+  a,
+  [role="button"],
+  [onclick],
+  .clickable {
+    cursor: pointer;
   }
 }
 
-body {
-  background: #F0F0F3;
-  color: var(--foreground);
-  min-height: 100vh;
-  font-family: system-ui, -apple-system, sans-serif;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-/* Hide scrollbars but keep functionality */
-* {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
-*::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.skeleton {
+  background: linear-gradient(90deg,
+      oklch(0.92 0 0) 0%,
+      oklch(0.945 0 0) 50%,
+      oklch(0.92 0 0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@layer utilities {
+  .text-display {
+    font-size: 3.25rem;
+    line-height: 4rem;
+    letter-spacing: -0.02em;
+    font-weight: 300;
+  }
+
+  .text-title {
+    font-size: 2rem;
+    line-height: 2.5rem;
+    letter-spacing: -0.01em;
+    font-weight: 500;
+  }
+
+  .text-subtitle {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    letter-spacing: -0.005em;
+    font-weight: 500;
+  }
+
+  .text-body {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+
+  .text-ui {
+    font-size: .875rem;
+    line-height: 1.25rem;
+    letter-spacing: 0.01em;
+    font-weight: 500;
+  }
+
+  .text-caption {
+    font-size: .75rem;
+    line-height: 1rem;
+    letter-spacing: 0.02em;
+    font-weight: 400;
+  }
+
+  .text-mono {
+    font-size: .875rem;
+    line-height: 1.25rem;
+    letter-spacing: 0;
+    font-weight: 500;
+    font-family: var(--font-mono);
+  }
+
+  .text-tool-name {
+    font-size: 2.625rem;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    font-weight: 700;
+  }
+
+  .text-heading {
+    font-size: 1.5rem;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    font-weight: 600;
+  }
+
+  .text-eyebrow {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .text-label {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  .text-form-label {
+    font-size: 0.6875rem;
+    line-height: 1.5;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .text-tiny {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+
+  .text-body-sm {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+
+  .text-tagline {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+
+  .text-quote {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    letter-spacing: 0;
+    font-weight: 300;
+    font-family: var(--font-sans);
+  }
 }

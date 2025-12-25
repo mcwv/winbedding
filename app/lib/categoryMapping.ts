@@ -1,24 +1,13 @@
-// Taxonomy v2: 20 high-intent categories
+// Taxonomy v3: Active high-intent categories (Short Names)
 export const MAIN_CATEGORIES = [
-  "AI Chat & Assistants",
-  "Image & Art Generation",
-  "Video Generation",
-  "Music & Audio",
-  "Writing & Content",
-  "Code & Development",
-  "Business & Productivity",
-  "Marketing & SEO",
-  "Data & Analytics",
-  "Design & Graphics",
-  "Voice & Speech",
-  "Translation & Language",
-  "Education & Learning",
-  "Research & Summarization",
-  "Automation & Workflows",
-  "E-commerce & Sales",
-  "Social Media",
-  "Gaming & Entertainment",
-  "Finance & Crypto",
+  "Code",
+  "Business",
+  "Writing",
+  "Image",
+  "Chatbot",
+  "Productivity",
+  "Video",
+  "Audio",
   "Other"
 ] as const
 
@@ -27,32 +16,40 @@ type MainCategory = typeof MAIN_CATEGORIES[number]
 export function mapCategory(originalCategory: string): MainCategory {
   if (!originalCategory) return "Other"
   const normalized = originalCategory.trim()
-  const match = MAIN_CATEGORIES.find(c => c.toLowerCase() === normalized.toLowerCase())
-  return match || "Other"
+  // Direct match check first
+  if ((MAIN_CATEGORIES as unknown as string[]).includes(normalized)) {
+    return normalized as MainCategory
+  }
+
+  // Legacy mapping (optional, but good for safety if old data persists)
+  const lower = normalized.toLowerCase()
+  if (lower.includes("code") || lower.includes("dev")) return "Code"
+  if (lower.includes("business")) return "Business"
+  if (lower.includes("writing") || lower.includes("copy")) return "Writing"
+  if (lower.includes("image") || lower.includes("art")) return "Image"
+  if (lower.includes("chat") || lower.includes("assistant")) return "Chatbot"
+  if (lower.includes("productivity")) return "Productivity"
+  if (lower.includes("video")) return "Video"
+  if (lower.includes("music") || lower.includes("audio")) return "Audio"
+
+  return "Other"
 }
 
-export function getCategoryColor(category: MainCategory): string {
+export function getCategoryColor(category: string): string {
+  // Normalize category to ensure we match even if casing is off
+  const cat = mapCategory(category)
+
   const colors: Record<MainCategory, string> = {
-    "AI Chat & Assistants": "#0ea5e9",
-    "Image & Art Generation": "#ec4899",
-    "Video Generation": "#f59e0b",
-    "Music & Audio": "#8b5cf6",
-    "Writing & Content": "#10b981",
-    "Code & Development": "#06b6d4",
-    "Business & Productivity": "#f43f5e",
-    "Marketing & SEO": "#6366f1",
-    "Data & Analytics": "#6366f1",
-    "Design & Graphics": "#ec4899",
-    "Voice & Speech": "#8b5cf6",
-    "Translation & Language": "#10b981",
-    "Education & Learning": "#f59e0b",
-    "Research & Summarization": "#0ea5e9",
-    "Automation & Workflows": "#06b6d4",
-    "E-commerce & Sales": "#f43f5e",
-    "Social Media": "#ec4899",
-    "Gaming & Entertainment": "#f59e0b",
-    "Finance & Crypto": "#10b981",
-    "Other": "#9ca3af"
+    "Code": "#06b6d4",        // Cyan
+    "Business": "#f43f5e",    // Rose
+    "Writing": "#10b981",     // Emerald
+    "Image": "#ec4899",       // Pink
+    "Chatbot": "#0ea5e9",     // Sky
+    "Productivity": "#f97316", // Orange
+    "Video": "#eab308",       // Yellow -> distinct from Orange
+    "Audio": "#8b5cf6",       // Violet
+    "Other": "#9ca3af"        // Gray
   }
-  return colors[category] || colors["Other"]
+  return colors[cat] || colors["Other"]
 }
+
